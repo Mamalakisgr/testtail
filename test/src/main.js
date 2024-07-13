@@ -6,7 +6,7 @@ import 'flowbite';
 
 import App from './App.vue'
 import router from './router'
-import store from './store'
+import store from './js'
 import './assets/tailmain.css'
 createApp(App).use(VueCarousel);
 

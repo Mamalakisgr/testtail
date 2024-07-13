@@ -1,0 +1,568 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const multer = require('multer');
+const path = require('path');
+const User = require('./models/UserSchema');
+const Product = require('./models/Product');
+const Tag = require('./models/Tag');
+const Category = require('./models/Category');
+const app = express();
+const PORT = 5174;
+const bcrypt = require('bcrypt');
+
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(bodyParser.json());
+app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// MongoDB Connection
+mongoose
+  .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Successfully connected to MongoDB'))
+  .catch((error) => console.log('Failed to connect to MongoDB:', error));
+
+// Set up storage engine
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Initialize upload
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 }, // Limit file size to 1MB
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  }
+}).single('productImage');
+
+
+// Check file type
+function checkFileType(file, cb) {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb('Error: Images Only!');
+  }
+}
+
+app.post('/api/registerUser', async (req, res) => {
+  const { email, firstName, lastName, mobilePhone, phone, password } = req.body;
+  try {
+    // Convert email to lowercase
+    const lowerCaseEmail = email.toLowerCase();
+
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed Password:', hashedPassword);
+
+    const newUser = new User({
+      email: lowerCaseEmail,
+      firstName,
+      lastName,
+      mobilePhone,
+      phone,
+      password: hashedPassword
+    });
+
+    await newUser.save();
+    res.send('User registered successfully');
+  } catch (err) {
+    console.error('Error during registration:', err);
+    res.status(500).send(err.message);
+  }
+});
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // Convert email to lowercase
+    const lowerCaseEmail = email.toLowerCase();
+
+    const user = await User.findOne({ email: lowerCaseEmail });
+    console.log('User found:', user);
+
+    if (user) {
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      console.log('Password match result:', isPasswordCorrect);
+
+      if (isPasswordCorrect) {
+        req.session.userId = user._id;
+        res.json({ message: 'Login successful', userId: user._id });
+      } else {
+        res.status(401).send('Invalid credentials');
+      }
+    } else {
+      res.status(401).send('Invalid credentials');
+    }
+  } catch (err) {
+    console.error('Error during login:', err);
+    res.status(500).send('Server error');
+  }
+});
+
+
+app.post('/api/upload-tag', async (req, res) => {
+  console.log(req.body);  // Now this should log form data correctly
+  const { name } = req.body;
+
+  if (!name) {
+      return res.status(400).send('Tag name is required.');
+  }
+  try {
+      const newTag = new Tag({ name });
+      await newTag.save();
+      res.status(201).send('Tag uploaded successfully');
+  } catch (error) {
+      console.error('Failed to upload tag:', error);
+      res.status(500).send('Server error');
+  }
+});
+app.get('/api/auth', (req, res) => {
+  if (req.session && req.session.userId) {
+    res.status(200).json({ loggedIn: true, userId: req.session.userId });
+  } else {
+    res.status(200).json({ loggedIn: false });
+  }
+});
+
+app.post('/api/upload-category', async (req, res) => {
+  console.log(req.body);  // Now this should log form data correctly
+  const { name } = req.body;
+
+  if (!name) {
+      return res.status(400).send('Category name is required.');
+  }
+  try {
+      const newCategory = new Category({ name });
+      await newCategory.save();
+      res.status(201).send('Tag uploaded successfully');
+  } catch (error) {
+      console.error('Failed to upload tag:', error);
+      res.status(500).send('Server error');
+  }
+});// Route to upload product
+app.post('/api/upload-product', (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: err });
+    }
+
+    const { name, price, p_category, p_tag, p_brand, p_quantity, offer_price } = req.body;
+    const productImage = req.file ? req.file.path : ''; // Handle the case where no file is uploaded
+
+    // Process tags: Split, map "-" to null, and filter out empty tags
+    const processedTags = p_tag.split(',').map(tag => tag.trim() === '-' ? null : tag.trim()).filter(tag => tag);
+
+    try {
+      const newProduct = new Product({
+        product_name: name,
+        p_price: price,
+        p_category: p_category,
+        p_tag: processedTags, // Use the processed tags array
+        p_brand: p_brand,
+        p_quantity: p_quantity,
+        offer_price: offer_price,
+        image: productImage
+      });
+
+      await newProduct.save(); // Save the new product to the database
+      res.status(201).send('Product uploaded successfully');
+    } catch (error) {
+      console.error('Failed to upload product:', error);
+      res.status(500).send('Server error');
+    }
+  });
+});
+// PUT route for updating a product
+app.put('/api/products/:productId', (req, res) => {
+  uploadUpdate(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: err });
+    }
+
+    const { productId } = req.params;
+    const { name, price, p_category, p_tag, p_brand, p_quantity, offer_price } = req.body;
+    const productImage = req.file ? req.file.path : null; // Handle the case where no file is uploaded
+
+    try {
+      const updateData = {
+        product_name: name,
+        p_price: price,
+        p_category,
+        p_tag,
+        p_brand,
+        p_quantity,
+        offer_price
+      };
+
+      if (productImage) {
+        updateData.image = productImage;
+      }
+
+      const updatedProduct = await Product.findByIdAndUpdate(productId, updateData, { new: true });
+
+      if (!updatedProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+
+      res.json(updatedProduct);
+    } catch (error) {
+      console.error('Error updating product:', error);
+      res.status(500).send('Server error');
+    }
+  });
+});
+
+// DELETE route for deleting a product
+app.delete('/api/products/:productId', async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+
+app.get('/api/products', async (req, res) => {
+  const { category, tag } = req.query;
+
+  try {
+    let query = {};
+    if (category) {
+      query.p_category = category;
+    }
+    if (tag) {
+      query.p_tag = { $regex: new RegExp(tag, 'i') };
+    }
+
+    const products = await Product.find(query);
+    const productsWithWishlistInfo = products.map(product => ({
+      ...product.toObject(),
+    }));
+    res.json(productsWithWishlistInfo);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+
+app.get('/api/products/offer', async (req, res) => {
+  try {
+    const products = await Product.find({ p_tag: { $regex: 'offers', $options: 'i' } });
+    console.log(products);  // Check what the query returns
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No products found with the Offers tag" });
+    }
+    res.json(products);
+  } catch (error) {
+    console.error('Failed to fetch products with offer tag:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/api/products/new', async (req, res) => {
+  try {
+    const products = await Product.find({ p_tag: { $regex: 'new', $options: 'i' } });
+    console.log(products);  // Check what the query returns
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No products found with the New tag" });
+    }
+    res.json(products);
+  } catch (error) {
+    console.error('Failed to fetch products with new tag:', error);
+    res.status(500).send('Server error');
+  }
+});
+app.get('/api/products/:categoryId', async (req, res) => {
+
+
+  const { categoryId } = req.params;
+
+  try {
+    const products = await Product.find({ p_category: categoryId });
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    res.status(500).send('Server error');
+  }
+});
+app.get('/api/tags', async (req, res) => {
+  try {
+    const tags = await Tag.find().distinct('name');  // Retrieve all unique tags
+    res.json(tags);
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/api/categories', async (req, res) => {
+  try {
+    const categories = await Category.find().distinct('name');  // Retrieve all unique tags
+    res.json(categories);
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/api/cart-count', async (req, res) => {
+  if (req.session && req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      const cartCount = user.cart.reduce((total, item) => total + item.quantity, 0);
+      res.json({ count: cartCount });
+    } catch (error) {
+      console.error('Error fetching cart count:', error);
+      res.status(500).send('Unable to retrieve cart count');
+    }
+  } else {
+    // Handle guest users by session cart count
+    const cartCount = req.session.cart ? req.session.cart.reduce((total, item) => total + item.quantity, 0) : 0;
+    res.json({ count: cartCount });
+  }
+});
+
+// Define a new upload middleware for handling image updates
+const uploadUpdate = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 }, // Limit file size to 1MB
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  }
+}).single('productImage');
+app.post('/api/add-to-cart', async (req, res) => {
+  const { productId, quantity } = req.body;
+
+  if (!productId || !quantity) {
+    return res.status(400).json({ error: 'Product ID and quantity are required' });
+  }
+
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    if (req.session && req.session.userId) {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      if (!user.cart) {
+        user.cart = [];
+      }
+
+      const productIndex = user.cart.findIndex(item => item.productId.toString() === productId);
+      if (productIndex > -1) {
+        user.cart[productIndex].quantity += quantity;
+      } else {
+        user.cart.push({
+          productId,
+          name: product.product_name,
+          price: product.p_price,
+          image: product.image,
+          quantity
+        });
+      }
+
+      await user.save();
+
+      // Calculate total items in the cart
+      const totalItems = user.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+      res.json({ message: 'Product added/updated in cart', totalItems });
+    } else {
+      if (!req.session.cart) {
+        req.session.cart = [];
+      }
+
+      const productIndex = req.session.cart.findIndex(item => item.productId === productId);
+      if (productIndex > -1) {
+        req.session.cart[productIndex].quantity += quantity;
+      } else {
+        req.session.cart.push({
+          productId,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity
+        });
+      }
+
+      const totalItems = req.session.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+      res.json({ message: 'Product added/updated in cart', totalItems });
+    }
+  } catch (error) {
+    console.error('Server error in adding product to cart:', error);
+    res.status(500).json({ error: 'Server error in adding product to cart' });
+  }
+});
+
+app.get('/api/cart-items', async (req, res) => {
+  if (req.session && req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      const cartItems = user.cart.map(item => ({
+        productId: item.productId,
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity
+      }));
+      res.json({ items: cartItems });
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+      res.status(500).send('Unable to retrieve cart items');
+    }
+  } else {
+    const cartItems = req.session.cart ? req.session.cart.map(item => ({
+      productId: item.productId,
+      name: item.name,
+      image: item.image,
+      price: item.price,
+      quantity: item.quantity
+    })) : [];
+    res.json({ items: cartItems });
+  }
+});
+
+
+
+app.get('/api/wishlist-count', async (req, res) => {
+  if (req.session && req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+      // Simply count the number of items in the wishlist
+      const wishlistCount = user.wishlist.length;
+      res.json({ count: wishlistCount });
+    } catch (error) {
+      console.error('Error fetching wishlist count:', error);
+      res.status(500).send('Unable to retrieve wishlist count');
+    }
+  } else {
+    // Handle guest users by session wishlist count
+    const wishlistCount = req.session.wishlist ? req.session.wishlist.length : 0;
+    res.json({ count: wishlistCount });
+  }
+});
+
+app.get('/api/wishlist-items', async (req, res) => {
+  if (req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId).populate('wishlist.productId');
+      const wishlistProductIds = user.wishlist.map(item => item.productId._id.toString());
+      res.json(wishlistProductIds);
+    } catch (error) {
+      console.error('Error fetching wishlist items:', error);
+      res.status(500).send('Server error');
+    }
+  } else {
+    // Return wishlist for guests
+    const wishlistProductIds = req.session.wishlist || [];
+    res.json(wishlistProductIds);
+  }
+});
+
+app.post('/api/add-to-wishlist', async (req, res) => {
+  const { productId } = req.body;
+
+  if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+    return res.status(400).json({ message: 'Invalid productId' });
+  }
+
+  if (req.session.userId) {
+    // Handle logged-in users
+    try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      if (user.wishlist.some(item => item.productId.equals(productId))) {
+        return res.status(400).json({ message: 'Product already in wishlist' });
+      }
+      user.wishlist.push({ productId });
+      await user.save();
+      res.json({ message: 'Product added to wishlist', count: user.wishlist.length });
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+      res.status(500).json({ error: 'Server error in adding product to wishlist' });
+    }
+  } else {
+    // Handle guests
+    if (!req.session.wishlist) {
+      req.session.wishlist = [];
+    }
+    if (req.session.wishlist.includes(productId)) {
+      return res.status(400).json({ message: 'Product already in wishlist' });
+    }
+    req.session.wishlist.push(productId);
+    res.json({ message: 'Product added to wishlist', count: req.session.wishlist.length });
+  }
+});
+
+app.post('/api/remove-from-wishlist', async (req, res) => {
+  const { productId } = req.body;
+
+  if (req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      user.wishlist = user.wishlist.filter(item => !item.productId.equals(productId));
+      await user.save();
+      res.json({ message: 'Product removed from wishlist' });
+    } catch (error) {
+      console.error('Error removing from wishlist:', error);
+      res.status(500).json({ error: 'Server error in removing product from wishlist' });
+    }
+  } else {
+    // Handle guest wishlist removal
+    if (!req.session.wishlist) {
+      req.session.wishlist = [];
+    }
+    req.session.wishlist = req.session.wishlist.filter(id => id !== productId);
+    res.json({ message: 'Product removed from wishlist', count: req.session.wishlist.length });
+  }
+});
+
+// Middleware to validate ObjectId
+const isValidObjectId = (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.productId)) {
+    return res.status(400).send('Invalid Product ID');
+  }
+  next();
+};
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

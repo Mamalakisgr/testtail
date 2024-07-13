@@ -1,7 +1,7 @@
 <template>
 <div id="default-carousel" class="relative w-full" data-carousel="slide">
     <!-- Carousel wrapper -->
-    <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+    <div class="relative h-56 overflow-hidden rounded-lg md:h-96" >
       <!-- Item 1 -->
       <div class="hidden duration-700 ease-in-out" data-carousel-item="active">
         <img src="../images/jacketcat.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
@@ -50,3 +50,64 @@
     </button>
   </div>
 </template>
+
+<script setup>
+import { onMounted } from 'vue';
+import { Carousel } from 'flowbite';
+onMounted(() => {
+  const carouselElement = document.getElementById('default-carousel');
+
+  const options = {
+    defaultPosition: 0,
+    interval: 3000,
+    indicators: {
+      activeClasses: 'bg-white dark:bg-gray-800',
+      inactiveClasses: 'bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800',
+    },
+    onNext: () => {
+      console.log('next slider item is shown');
+    },
+    onPrev: () => {
+      console.log('previous slider item is shown');
+    },
+    onChange: () => {
+      console.log('new slider item has been shown');
+    },
+  };
+
+  if (carouselElement) {
+    const carousel = new Carousel(carouselElement, options);
+
+    const nextButton = carouselElement.querySelector('[data-carousel-next]');
+    const prevButton = carouselElement.querySelector('[data-carousel-prev]');
+
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        console.log('next button clicked');
+        carousel.next();
+      });
+    }
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        console.log('prev button clicked');
+        carousel.prev();
+      });
+    }
+
+    const indicators = carouselElement.querySelectorAll('[data-carousel-slide-to]');
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        console.log(`indicator ${index} clicked`);
+        carousel.slideTo(index);
+      });
+    });
+
+    // Ensure that the initial active item is shown
+    const activeItem = carouselElement.querySelector('[data-carousel-item="active"]');
+    if (activeItem) {
+      activeItem.classList.remove('hidden');
+    }
+  }
+});
+</script>

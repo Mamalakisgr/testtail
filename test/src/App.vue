@@ -1,14 +1,23 @@
 <template>
   <div id="app">
-    <Header />
+    <component :is="currentHeader" />
     <router-view />
   </div>
 </template>
 
-
 <script setup>
-import Header from './components/Header.vue'
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import Header from './components/Header.vue';
+import BackofficeHeader from './components/BackofficeHeader.vue';
+
+const route = useRoute();
+
+const currentHeader = computed(() => {
+  return route.meta.requiresBackofficeHeader ? BackofficeHeader : Header;
+});
 </script>
+
 <style scoped>
 header {
   line-height: 1.5;
