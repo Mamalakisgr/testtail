@@ -7,15 +7,19 @@
       <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
         <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
           <div class="space-y-6">
+            <div v-if="cartItems.length === 0" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6 text-center text-gray-900 dark:text-white">
+              <p>Your cart is empty.</p>
+            </div>
             <div
+              v-else
               v-for="(item, index) in cartItems"
               :key="index"
               class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
             >
               <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                 <a href="#" class="shrink-0 md:order-1">
-                  <img :src="item.image" alt="product image" class="h-20 w-20 dark:hidden" />
-                  <img :src="item.imageDark" alt="product image" class="hidden h-20 w-20 dark:block" />
+                  <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
+                  <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
                 </a>
 
                 <label for="counter-input" class="sr-only">Choose quantity:</label>
@@ -93,7 +97,7 @@
 
                     <button
                       type="button"
-                      @click="removeItem(index)"
+                      @click="removeItem(item.productId)"
                       class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
                     >
                       <svg
@@ -157,7 +161,7 @@
             </div>
 
             <a
-              href="#"
+              href="/checkout"
               class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
               Proceed to Checkout
@@ -166,7 +170,7 @@
             <div class="flex items-center justify-center gap-2">
               <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
               <a
-                href="#"
+                href="/"
                 title=""
                 class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
               >
@@ -208,41 +212,24 @@
       </div>
     </div>
   </section>
+  <Footer/>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import axios from 'axios';
+import eventBus from '../js/eventBus';
+import Footer from '../components/Footer.vue';
+const cartItems = ref([]);
 
-const cartItems = ref([
-  {
-    name: 'PC system All in One APPLE iMac (2023) mqrq3ro/a',
-    price: 1499,
-    quantity: 2,
-    image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg',
-    imageDark: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg'
-  },
-  {
-    name: 'Restored Apple Watch Series 8 (GPS) 41mm',
-    price: 598,
-    quantity: 1,
-    image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/apple-watch-light.svg',
-    imageDark: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/apple-watch-dark.svg'
-  },
-  {
-    name: 'Apple - MacBook Pro 16" Laptop, M3 Pro chip',
-    price: 1799,
-    quantity: 1,
-    image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/macbook-pro-light.svg',
-    imageDark: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/macbook-pro-dark.svg'
-  },
-  {
-    name: 'APPLE iPhone 15 5G phone, 256GB, Gold',
-    price: 2997,
-    quantity: 3,
-    image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/iphone-light.svg',
-    imageDark: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/iphone-dark.svg'
+const fetchCartItems = async () => {
+  try {
+    const response = await axios.get('http://localhost:5174/api/cart-items', { withCredentials: true });
+    cartItems.value = response.data.items;
+  } catch (error) {
+    console.error('Failed to fetch cart items', error);
   }
-]);
+};
 
 const incrementQuantity = (index) => {
   cartItems.value[index].quantity++;
@@ -254,10 +241,28 @@ const decrementQuantity = (index) => {
   }
 };
 
-const removeItem = (index) => {
-  cartItems.value.splice(index, 1);
+const removeItem = async (productId) => {
+  if (!productId) {
+    console.error('Product ID is undefined');
+    return;
+  }
+
+  try {
+    const response = await axios.delete(`http://localhost:5174/api/cart-items/${productId}`, { withCredentials: true });
+    // Fetch updated cart items
+    fetchCartItems();
+    // Emit event to update cart count
+    eventBus.emit('product-removed', response.data.totalItems);
+  } catch (error) {
+    console.error('Failed to remove item from cart', error);
+  }
 };
 
+watch(() => (newVal) => {
+  if (newVal) {
+    fetchCartItems();
+  }
+});
 const originalPrice = computed(() => {
   return cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0);
 });
@@ -277,6 +282,9 @@ const tax = computed(() => {
 const totalPrice = computed(() => {
   return originalPrice.value - savings.value + storePickup.value + tax.value;
 });
+onMounted(()=>{
+  fetchCartItems();
+})
 </script>
 
 <style scoped>

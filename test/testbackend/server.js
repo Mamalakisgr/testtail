@@ -423,36 +423,96 @@ app.post('/api/add-to-cart', async (req, res) => {
     res.status(500).json({ error: 'Server error in adding product to cart' });
   }
 });
-
 app.get('/api/cart-items', async (req, res) => {
-  if (req.session && req.session.userId) {
-    try {
-      const user = await User.findById(req.session.userId);
-      const cartItems = user.cart.map(item => ({
+  try {
+    let cartItems = [];
+
+    if (req.session && req.session.userId) {
+      // Authenticated user
+      const user = await User.findById(req.session.userId).populate('cart.productId');
+      cartItems = user.cart.map(item => ({
         productId: item.productId,
         name: item.name,
         image: item.image,
         price: item.price,
         quantity: item.quantity
       }));
-      res.json({ items: cartItems });
-    } catch (error) {
-      console.error('Error fetching cart items:', error);
-      res.status(500).send('Unable to retrieve cart items');
+    } else if (req.session.cart) {
+      // Guest user
+      const sessionCart = req.session.cart;
+      for (const item of sessionCart) {
+        const product = await Product.findById(item.productId);
+        if (product) {
+          cartItems.push({
+            productId: product._id,
+            name: product.product_name,
+            image: product.image,
+            price: product.p_price,
+            quantity: item.quantity
+          });
+        } else {
+          console.error(`Product with ID ${item.productId} not found`);
+        }
+      }
     }
-  } else {
-    const cartItems = req.session.cart ? req.session.cart.map(item => ({
-      productId: item.productId,
-      name: item.name,
-      image: item.image,
-      price: item.price,
-      quantity: item.quantity
-    })) : [];
+
     res.json({ items: cartItems });
+  } catch (error) {
+    console.error('Error fetching cart items:', error);
+    res.status(500).send('Unable to retrieve cart items');
   }
 });
 
+// Delete from cart route
+// Delete from cart route
+app.delete('/api/cart-items/:productId', async (req, res) => {
+  const { productId } = req.params;
 
+  console.log('Received productId:', productId);
+
+  if (req.session && req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        console.log('User not found');
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const cartItemIndex = user.cart.findIndex(item => item.productId.toString() === productId);
+      if (cartItemIndex === -1) {
+        console.log('Product not found in user cart');
+        return res.status(404).json({ error: 'Product not found in cart' });
+      }
+
+      user.cart.splice(cartItemIndex, 1);
+      await user.save();
+
+      const totalItems = user.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+      res.json({ message: 'Product removed from cart', totalItems });
+    } catch (error) {
+      console.error('Error removing product from user cart:', error);
+      res.status(500).json({ error: 'Server error in removing product from cart' });
+    }
+  } else {
+    if (!req.session.cart) {
+      console.log('Session cart is empty');
+      return res.status(404).json({ error: 'Cart is empty' });
+    }
+
+    const cartItemIndex = req.session.cart.findIndex(item => item.productId === productId);
+    if (cartItemIndex === -1) {
+      console.log('Product not found in session cart');
+      return res.status(404).json({ error: 'Product not found in cart' });
+    }
+
+    req.session.cart.splice(cartItemIndex, 1);
+
+    const totalItems = req.session.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    res.json({ message: 'Product removed from cart', totalItems });
+  }
+});
 
 app.get('/api/wishlist-count', async (req, res) => {
   if (req.session && req.session.userId) {

@@ -17,20 +17,24 @@
   "dependencies": {
     "@chenfengyuan/vue-carousel": "^2.0.0",
     "@vueuse/core": "^10.9.0",
+    "animate.css": "^4.1.1",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "flowbite": "^2.3.0",
+    "i18n-iso-countries": "^7.11.2",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.1",
     "swiper": "^11.1.3",
     "vue": "^3.4.21",
     "vue-carousel": "^0.18.0",
+    "vue-country-region-select": "^2.0.16",
     "vue-router": "^4.3.0",
     "vue-slick-carousel": "^1.0.5",
-    "vue3-carousel": "^0.3.3"
+    "vue3-carousel": "^0.3.3",
+    "vue3-country-region-select": "^1.0.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

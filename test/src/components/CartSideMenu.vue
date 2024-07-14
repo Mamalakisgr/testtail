@@ -14,10 +14,13 @@
                   <span class="block text-sm text-gray-400">{{ item.quantity }} x</span>
                 </div>
                 <span>{{ (item.quantity * item.price).toFixed(2) }}</span>
-                <button @click="removeFromCart(item.id)" class="ml-2 text-red-500 hover:text-red-700">X</button>
+                <button @click="removeFromCart(item.productId)" class="ml-2 text-red-500 hover:text-red-700">X</button>
               </li>
             </ul>
             <RouterLink to="/cart" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
+              Cart Page
+            </RouterLink>
+            <RouterLink to="/checkout" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
               Checkout
             </RouterLink>
           </div>
@@ -33,11 +36,11 @@
 <script setup>
 import { ref, watch } from 'vue';
 import axios from 'axios';
+import eventBus from '../js/eventBus';
 
 const props = defineProps({
   isCartOpen: Boolean,
   toggleCart: Function,
-
 });
 
 const cartItems = ref([]);
@@ -50,11 +53,19 @@ const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
-const removeFromCart = async (itemId) => {
+
+const removeFromCart = async (productId) => {
+  if (!productId) {
+    console.error('Product ID is undefined');
+    return;
+  }
+
   try {
-    await axios.delete(`http://localhost:5174/api/cart-items/${itemId}`, { withCredentials: true });
+    const response = await axios.delete(`http://localhost:5174/api/cart-items/${productId}`, { withCredentials: true });
     // Fetch updated cart items
     fetchCartItems();
+    // Emit event to update cart count
+    eventBus.emit('product-removed', response.data.totalItems);
   } catch (error) {
     console.error('Failed to remove item from cart', error);
   }

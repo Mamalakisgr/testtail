@@ -7,7 +7,12 @@ import ProductDetails from '../views/ProductDetails.vue'
 import BackofficeUploadProduct from '../views/admin-upload-product.vue'
 import BackofficeUploadTag from '../views/admin-upload-tag.vue'
 import EditProduct from '../views/admin-edit-products.vue'
+import CategoryPage from '../views/ProductList.vue';
+import ProductDetailsId from '../views/ProductDetails.vue'
+import Checkout from '../views/Checkout.vue'
+
 import { Carousel, Slide } from 'vue-carousel';
+import '../assets/main.css';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,12 +35,29 @@ const router = createRouter({
 
     },
     {
+      path: '/product-list/:categoryId',
+      name: 'CategoryPage',
+      component: CategoryPage,
+      props: true,
+    },
+    {
+      path: '/product-details/:productId',
+      name: 'ProductPage',
+      component: ProductDetailsId,
+      props: true,
+    },
+    {
       path: '/cart',
       name: 'cart',
       component: Cart
     },
     {
-      path: '/productlist',
+      path: '/checkout',
+      name: 'checkout',
+      component: Checkout
+    },
+    {
+      path: '/product-list',
       name: 'productlist',
       component: ProductList
     },

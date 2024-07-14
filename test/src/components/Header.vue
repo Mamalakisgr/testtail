@@ -12,9 +12,9 @@
       </button>
       <div class="flex-shrink-0 flex items-center justify-center p-[2px] space-x-4">
         <RouterLink to="/" class="flex-shrink-0 flex items-center justify-center p-[2px] space-x-4">
-        <img class="h-12 w-12 rounded-full border-2 border-white shadow-lg" src="/8218.png_860.png" alt="Eshop Logo">
-        <span class="font-semibold text-xl tracking-tight">Arxidopoulos A.E.</span>
-      </RouterLink>
+          <img class="h-12 w-12 rounded-full border-2 border-white shadow-lg" src="/8218.png_860.png" alt="Eshop Logo">
+          <span class="font-semibold text-xl tracking-tight">Arxidopoulos A.E.</span>
+        </RouterLink>
       </div>
     </div>
     <div class="hidden lg:flex lg:items-center lg:space-x-4 ml-4">
@@ -36,7 +36,7 @@
   </header>
 
   <transition name="slide">
-    <div v-if="isMenuOpen" id="mobile-menu" class="fixed inset-0 flex z-10" style='z-index: 99;'>
+    <div v-if="isMenuOpen" id="mobile-menu" class="fixed inset-0 flex z-10" style="z-index: 99;">
       <div class="bg-gray-900 bg-opacity-50 w-full" @click="toggleMenu"></div>
       <aside class="w-64 bg-gray-800 text-white z-20 fixed left-0 h-full">
         <nav class="flex flex-col space-y-2 p-4 items-center">
@@ -48,6 +48,14 @@
           <RouterLink to="/new-products" class="block px-4 py-2" @click="toggleMenu">New Releases</RouterLink>
           <RouterLink to="/product-list-shirts" class="block px-4 py-2" @click="toggleMenu">Shirts</RouterLink>
           <RouterLink to="/product-list-shoes" class="block px-4 py-2" @click="toggleMenu">Shoes</RouterLink>
+          <div class="relative group">
+            <div class="block px-4 py-2 cursor-pointer">Categories</div>
+            <ul class="w-64 bg-gray-800 text-white z-20 fixed left-0 h-full shadow-lg hidden group-hover:block">
+              <li v-for="category in categories" :key="category._id" class="px-4 py-2 hover:bg-gray-700">
+                <RouterLink :to="`/product-list/${category}`" @click="toggleMenu">{{ category }}</RouterLink>
+              </li>
+            </ul>
+          </div>
         </nav>
       </aside>
     </div>
@@ -57,12 +65,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import axios from 'axios';
 import CartSideMenu from '../components/CartSideMenu.vue';
 import LoginModal from '../components/LoginModal.vue';
-
+import eventBus from '../js/eventBus';
+const categories = ref([]);
 const isMenuOpen = ref(false);
 const isCartOpen = ref(false);
 const isLoginModalVisible = ref(false);
@@ -96,13 +105,14 @@ const fetchAuthStatus = async () => {
   }
 };
 
-const fetchCartCount = async () => {
-  try {
-    const response = await axios.get('http://localhost:5174/api/cart-count', { withCredentials: true });
-    cartCount.value = response.data.count;
-  } catch (error) {
-    console.error('Failed to fetch cart count', error);
-  }
+const fetchCartCount = () => {
+  axios.get('http://localhost:5174/api/cart-count', { withCredentials: true })
+    .then(response => {
+      cartCount.value = response.data.count;
+    })
+    .catch(error => {
+      console.error('Failed to fetch cart count', error);
+    });
 };
 const fetchCartItems = async () => {
   try {
@@ -112,11 +122,28 @@ const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get('http://localhost:5174/api/categories');
+    categories.value = response.data;
+  } catch (error) {
+    console.error('Failed to fetch categories', error);
+  }
+};
+eventBus.on('product-added', (newCount) => {
+  cartCount.value = newCount;
+});
+eventBus.on('product-removed', (newCount) => {
+  cartCount.value = newCount;
+});
 
 onMounted(() => {
   fetchAuthStatus();
   fetchCartCount();
+  fetchCategories();
   fetchCartItems();
+  eventBus.on('has-logged', fetchAuthStatus);
+  eventBus.on('has-logged', fetchCartCount);
   const handleFocusTrap = (e) => {
     if (isMenuOpen.value && !e.target.closest('#mobile-menu')) {
       e.preventDefault();
@@ -124,7 +151,11 @@ onMounted(() => {
       document.querySelector('#mobile-menu').focus();
     }
   };
-
+// Make sure to clean up the event listener when the component is unmounted
+onUnmounted(() => {
+  eventBus.off('has-logged', fetchAuthStatus);
+    eventBus.off('has-logged', fetchCartCount);
+});
   document.addEventListener('focusin', handleFocusTrap);
 
   return () => {
