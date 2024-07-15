@@ -8,7 +8,7 @@
               <img class="p-8 rounded-t-lg" :src="`http://localhost:5174/${product.image}`" alt="product image" />
             </a>
             <div class="px-5 pb-5">
-              <a href="#">
+              <a :href="`/product-details/${product._id}`">
                 <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ product.product_name }}</h5>
               </a>
               <div class="flex items-center justify-between">

@@ -186,6 +186,9 @@ app.post('/api/upload-product', (req, res) => {
     }
   });
 });
+
+
+
 // PUT route for updating a product
 app.put('/api/products/:productId', (req, res) => {
   uploadUpdate(req, res, async (err) => {
@@ -226,6 +229,7 @@ app.put('/api/products/:productId', (req, res) => {
   });
 });
 
+
 // DELETE route for deleting a product
 app.delete('/api/products/:productId', async (req, res) => {
   const { productId } = req.params;
@@ -245,8 +249,9 @@ app.delete('/api/products/:productId', async (req, res) => {
 });
 
 
+
 app.get('/api/products', async (req, res) => {
-  const { category, tag } = req.query;
+  const { category, tag,productId  } = req.query;
 
   try {
     let query = {};
@@ -256,7 +261,9 @@ app.get('/api/products', async (req, res) => {
     if (tag) {
       query.p_tag = { $regex: new RegExp(tag, 'i') };
     }
-
+    if (productId) {
+      query._id = productId;
+    }
     const products = await Product.find(query);
     const productsWithWishlistInfo = products.map(product => ({
       ...product.toObject(),
@@ -354,6 +361,7 @@ const uploadUpdate = multer({
     checkFileType(file, cb);
   }
 }).single('productImage');
+
 app.post('/api/add-to-cart', async (req, res) => {
   const { productId, quantity } = req.body;
 
@@ -431,7 +439,7 @@ app.get('/api/cart-items', async (req, res) => {
       // Authenticated user
       const user = await User.findById(req.session.userId).populate('cart.productId');
       cartItems = user.cart.map(item => ({
-        productId: item.productId,
+        productId: item.productId._id, // Ensure only the _id is sent
         name: item.name,
         image: item.image,
         price: item.price,
@@ -463,8 +471,8 @@ app.get('/api/cart-items', async (req, res) => {
   }
 });
 
-// Delete from cart route
-// Delete from cart route
+// DELETE route for deleting an item from the cart
+// DELETE route for deleting an item from the cart
 app.delete('/api/cart-items/:productId', async (req, res) => {
   const { productId } = req.params;
 
@@ -478,7 +486,13 @@ app.delete('/api/cart-items/:productId', async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      const cartItemIndex = user.cart.findIndex(item => item.productId.toString() === productId);
+      console.log('User cart:', user.cart);
+
+      // Convert productId to ObjectId for comparison
+      const productIdObj = new mongoose.Types.ObjectId(productId);
+
+      const cartItemIndex = user.cart.findIndex(item => item.productId.equals(productIdObj));
+
       if (cartItemIndex === -1) {
         console.log('Product not found in user cart');
         return res.status(404).json({ error: 'Product not found in cart' });

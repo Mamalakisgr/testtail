@@ -14,7 +14,7 @@
                   <span class="block text-sm text-gray-400">{{ item.quantity }} x</span>
                 </div>
                 <span>{{ (item.quantity * item.price).toFixed(2) }}</span>
-                <button @click="removeFromCart(item.productId)" class="ml-2 text-red-500 hover:text-red-700">X</button>
+                <button @click="removeFromCart(item.productId )" class="ml-2 text-red-500 hover:text-red-700">X</button>
               </li>
             </ul>
             <RouterLink to="/cart" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
@@ -59,6 +59,8 @@ const removeFromCart = async (productId) => {
     console.error('Product ID is undefined');
     return;
   }
+
+  console.log('Removing product with ID:', productId); // Debug log
 
   try {
     const response = await axios.delete(`http://localhost:5174/api/cart-items/${productId}`, { withCredentials: true });
