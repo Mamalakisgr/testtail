@@ -2,6 +2,8 @@
   <div id="app">
     <component :is="currentHeader" />
     <router-view />
+    <Notification message="Product has been added to cart" />
+
   </div>
 </template>
 
@@ -10,6 +12,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './components/Header.vue';
 import BackofficeHeader from './components/BackofficeHeader.vue';
+import Notification from './components/Notification.vue';
 
 const route = useRoute();
 
