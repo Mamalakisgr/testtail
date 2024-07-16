@@ -10,7 +10,7 @@ import EditProduct from '../views/admin-edit-products.vue'
 import CategoryPage from '../views/ProductList.vue';
 import ProductDetailsId from '../views/ProductDetails.vue'
 import Checkout from '../views/Checkout.vue'
-
+import Wishlist from '../views/Wishlist.vue'
 import { Carousel, Slide } from 'vue-carousel';
 import '../assets/main.css';
 
@@ -70,6 +70,11 @@ const router = createRouter({
       path: '/product-details',
       name: 'product-details',
       component: ProductDetails
+    },
+    {
+      path: '/wishlist',
+      name: 'wishlist',
+      component: Wishlist
     },
     {
       path: '/admin/upload-product',

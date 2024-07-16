@@ -39,8 +39,10 @@ export const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
+
 watch(() => (newVal) => {
   if (newVal) {
     fetchCartItems();
+   
   }
 });

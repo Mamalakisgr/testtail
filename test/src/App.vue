@@ -2,7 +2,7 @@
   <div id="app">
     <component :is="currentHeader" />
     <router-view />
-    <Notification message="Product has been added to cart" />
+        <Notification message="Product has been added to cart" />
 
   </div>
 </template>

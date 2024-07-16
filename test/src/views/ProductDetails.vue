@@ -10,7 +10,7 @@
           <div class="flex mb-4">
             <!-- Add rating or other details if necessary -->
           </div>
-          <p class="leading-relaxed">{{ product.description }}</p>
+          <p class="leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.{{ product.description }}</p>
           <div class="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
             <div class="flex ml-6 items-center">
               <span class="mr-3">Size</span>

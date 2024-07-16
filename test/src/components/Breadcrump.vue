@@ -1,5 +1,20 @@
 <template>
-    <nav class="bg-gray-800 text-gray-700 body-font">
+     <fwb-breadcrumb solid>
+    <fwb-breadcrumb-item home href="/">
+        <router-link :to="`/product-list/${product.p_category}`" class="ml-1 text-gray-500 hover:text-gray-700 md:ml-2">
+               Home
+              </router-link>
+    </fwb-breadcrumb-item>
+    <fwb-breadcrumb-item href="#">
+        <router-link :to="`/product-list/${product.p_category}`" class="ml-1 text-gray-500 hover:text-gray-700 md:ml-2">
+                {{ product.p_category }}
+              </router-link>
+    </fwb-breadcrumb-item>
+    <fwb-breadcrumb-item>
+        {{product.product_name}}
+    </fwb-breadcrumb-item>
+  </fwb-breadcrumb>
+    <!-- <nav class="bg-gray-800 text-gray-700 body-font">
       <div class="container mx-auto flex px-5 py-4 items-center justify-between">
         <ol class="bg-gray-600 inline-flex items-center space-x-1 md:space-x-3">
           <li>
@@ -27,14 +42,14 @@
           </li>
         </ol>
       </div>
-    </nav>
+    </nav> -->
   </template>
   
   <script setup>
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import axios from 'axios';
-  
+  import { FwbBreadcrumb, FwbBreadcrumbItem } from 'flowbite-vue'
   const route = useRoute();
   const product = ref({});
   const productId = route.params.productId;
