@@ -9,7 +9,7 @@
           <ul>
             <li v-for="category in categories" :key="category._id" class="mb-2">
               <RouterLink :to="`/product-list/${category}`" class="block py-2 px-4 rounded hover:bg-blue-700" :class="{'bg-blue-700 font-bold': route.params.categoryId === category}">
-                {{category }}
+                {{ category }}
               </RouterLink>
             </li>
           </ul>
@@ -44,7 +44,7 @@
       </div>
       <!-- Products Section -->
       <div class="w-full lg:w-3/4 flex flex-wrap gap-6 lg:ml-5">
-        <a v-for="product in filteredProducts" :key="product._id" :href="product.href" class="group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div v-for="product in filteredProducts" :key="product._id" class="relative group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
           <div class="fixed-dimensions">
             <img class="object-cover object-center w-full h-full rounded-t-lg" :src="`http://localhost:5174/${product.image}`" alt="product image" />
           </div>
@@ -52,16 +52,51 @@
             <a :href="`/product-details/${product._id}`">
               <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ product.product_name }}</h5>
             </a>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mt-3">
               <span class="text-3xl font-bold text-gray-900 dark:text-white">{{ product.p_price }} €</span>
               <button @click="addToCart(product._id, 1)" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</button>
             </div>
           </div>
-        </a>
+          <button
+            @click="toggleWishlist(product._id)"
+            class="absolute top-2 right-2 text-gray-500 hover:text-red-500"
+          >
+            <svg
+              v-if="wishlist.includes(product._id)"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8.5a5.5 5.5 0 0110.42-2.2A5.5 5.5 0 0121 8.5c0 3.58-3.28 6.44-8.28 11.05L12 20.35l-1.28-1.16C6.28 14.94 3 12.08 3 8.5z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  <Footer/>
+  <Footer />
 </template>
 
 <script setup>
@@ -70,6 +105,7 @@ import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { addToCart } from '@/js';
 import Footer from '../components/Footer.vue';
+import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';  // Adjust the import path accordingly
 
 const route = useRoute();
 const products = ref([]);
@@ -114,6 +150,7 @@ watch(() => route.params.categoryId, (newCategoryId) => {
 onMounted(() => {
   fetchProducts(route.params.categoryId);
   fetchCategories();
+  fetchWishlist();
 });
 </script>
 
@@ -131,7 +168,6 @@ onMounted(() => {
   width: 100%;
   height: 100%;
 }
-
 
 @media (min-width: 1024px) {
   .lg\\:ml-5 {

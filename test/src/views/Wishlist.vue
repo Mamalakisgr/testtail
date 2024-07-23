@@ -1,11 +1,10 @@
 <template>
-    <Header>
-      <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
-        <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+      <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16 min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-screen-xl px-4 2xl:px-8">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Wishlist</h2>
   
-          <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
-            <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+          <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8 w-full">
+            <div class="w-full lg:max-w-2xl xl:max-w-4xl">
               <div class="space-y-6">
                 <div v-if="wishlistItems.length === 0" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6 text-center text-gray-900 dark:text-white">
                   <p>Your wishlist is empty.</p>
@@ -17,25 +16,25 @@
                   class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
                 >
                   <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                    <a :href="`/product-details/${item.productId}`" class="shrink-0 md:order-1">
+                    <a :href="`/product-details/${item._id}`" class="shrink-0 md:order-1">
                       <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
                       <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
                     </a>
   
                     <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                      <a :href="`/product-details/${item.productId}`" class="text-base font-medium text-gray-900 hover:underline dark:text-white">{{ item.name }}</a>
+                      <a :href="`/product-details/${item._id}`" class="text-base font-medium text-gray-900 hover:underline dark:text-white">{{ item.product_name }}</a>
                     </div>
   
                     <div class="flex items-center justify-between md:order-3 md:justify-end">
                       <div class="text-end md:order-4 md:w-32">
-                        <p class="text-base font-bold text-gray-900 dark:text-white">${{ item.price }}</p>
+                        <p class="text-base font-bold text-gray-900 dark:text-white">${{ item.p_price }}</p>
                       </div>
                     </div>
   
                     <div class="flex items-center gap-4 md:order-5">
                       <button
                         type="button"
-                        @click="toggleWishlist(item.productId)"
+                        @click="removeItem(item._id)"
                         class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white"
                       >
                         <svg
@@ -58,49 +57,51 @@
                         Remove from Wishlist
                       </button>
   
-                      <button
-                        type="button"
-                        @click="removeItem(item.productId)"
-                        class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
-                      >
-                        <svg
-                          class="me-1.5 h-5 w-5"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
-                        </svg>
-                        Remove
-                      </button>
+                     
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          
         </div>
       </section>
-    </Header>
+      <Footer/>
   </template>
   
   <script setup>
   import { ref, onMounted } from 'vue';
   import { fetchWishlist, wishlist, toggleWishlist } from '@/js/wishlist'; // Adjust the import path accordingly
-  
+  import axios from 'axios';
+  import Footer from '../components/Footer.vue'
   const wishlistItems = ref([]);
+  
+  const fetchProductDetails = async (productIds) => {
+    try {
+      const response = await axios.post('http://localhost:5174/api/product-details', {
+        productIds,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching product details:', error);
+      return [];
+    }
+  };
   
   const removeItem = async (productId) => {
     await toggleWishlist(productId);
-    wishlistItems.value = wishlist.value; // Update local state after removal
+    await loadWishlistItems(); // Refetch the wishlist items to update the state properly
+  };
+  
+  const loadWishlistItems = async () => {
+    await fetchWishlist();
+    const productDetails = await fetchProductDetails(wishlist.value);
+    wishlistItems.value = productDetails;
   };
   
   onMounted(() => {
-    fetchWishlist();
-    wishlistItems.value = wishlist.value;
+    loadWishlistItems();
   });
   </script>
   

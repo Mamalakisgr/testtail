@@ -1,63 +1,47 @@
 <template>
-  <div>
-    <form @submit.prevent="submitForm" class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-      <!-- Billing Address -->
-      <div>
-        <div class="text-2xl my-4">Billing Address</div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="mb-4">
-            <label for="firstName" class="block text-gray-700 mb-2">First Name</label>
-            <input v-model="formData.firstName" type="text" id="firstName" name="firstName" class="w-full form-input p-1 border rounded-md shadow-sm" required>
-          </div>
-          <div class="mb-4">
-            <label for="lastName" class="block text-gray-700 mb-2">Last Name</label>
-            <input v-model="formData.lastName" type="text" id="lastName" name="lastName" class="w-full form-input p-1 border rounded-md shadow-sm" required>
-          </div>
-        </div>
-        <div class="mb-4">
-          <label for="email" class="block text-gray-700 mb-2">Email Address</label>
-          <input v-model="formData.email" type="email" id="email" name="email" class="w-full form-input p-1 border rounded-md shadow-sm" required>
-        </div>
-        <div class="mb-4">
-          <label for="address" class="block text-gray-700 mb-2">Address</label>
-          <textarea v-model="formData.address" id="address" name="address" rows="5" class="w-full form-textarea p-1 border rounded-md shadow-sm" required></textarea>
-        </div>
-        <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label for="city" class="block text-gray-700 mb-2">City</label>
-            <input v-model="formData.city" type="text" id="city" name="city" class="w-full form-input p-1 border rounded-md shadow-sm" required>
-          </div>
-          <div>
-            <label for="zip" class="block text-gray-700 mb-2">ZIP Code</label>
-            <input v-model="formData.zip" type="text" id="zip" name="zip" class="w-full form-input p-1 border rounded-md shadow-sm" required>
-          </div>
-          <div>
-            <CountrySelector />
-          </div>
-        </div>
-        <div class="mb-4">
-          <input v-model="sameAsBilling" type="checkbox" @change="toggleShippingAddress" />
-          <label class="ml-2">Shipping address is the same as my billing address</label>
-        </div>
-        <div class="mb-8">
-          <input v-model="saveInfo" type="checkbox" />
-          <label class="ml-2">Save this information for next time</label>
+  <div class="container mx-auto p-6 shadow-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    <div class="grid grid-cols-1 lg:grid-cols-12 lg:gap-10 lg:pt-12">
+
+      <!-- Billing Form, Payment Selector, and Payment -->
+      <div class="lg:col-span-8 space-y-6">
+        <BillingForm
+          :formData="formData"
+          :sameAsBilling.sync="sameAsBilling"
+          :saveInfo.sync="saveInfo"
+          @submit="submitForm"
+          @toggle-shipping-address="toggleShippingAddress"
+        />
+        <Delivery />
+        <PaymentSelector />
+        <Payment @handle-card="handleCard" @change-parent="handleAlert" :total="total"></Payment>
+        <Summary :items="items"></Summary>
+        <button @click="finishPayment" class="w-full text-ceenter px-4 py-3 bg-blue-500 rounded-md shadow-md text-white font-semibold">
+        Finish payment
+       </button>
+        <Alert :visible="alertVisible" position="top-right" color="success" title="Success"
+          description="Your payment has been successfully processed." />
+      </div>
+            <!-- Summary -->
+            <div class="lg:col-span-4">
+        <div class="sticky top-20">
+          <OrderSynopsis></OrderSynopsis>
         </div>
       </div>
-    </form>
+    </div>
+
   </div>
-  <div :class="isCard ? '' : 'lg:h-screen'" class="container mx-auto p-6 grid grid-cols-1 row-gap-12 lg:grid-cols-10 lg:col-gap-10 lg:pt-12">
-    <Payment @handle-card="handleCard" @change-parent="handleAlert" :total="total"></Payment>
-    <Summary :items="items"></Summary>
-    <Alert :visible="alertVisible" position="top-right" color="success" title="Success" description="Your payment has been successfully processed." />
-  </div>
+  
 </template>
 
 <script>
 import Payment from "../components/Payment.vue";
 import Summary from "../components/Summary.vue";
 import Alert from "../components/Alert.vue";
-import CountrySelector from "../components/CountrySelector.vue";
+import Delivery from "../components/Delivery.vue";
+import BillingForm from "../components/BillingForm.vue";
+import PaymentSelector from "../components/PaymentSelector.vue";
+import OrderSynopsis from "../components/OrderSynopsys.vue";
+
 import axios from 'axios';
 
 export default {
@@ -66,7 +50,10 @@ export default {
     Payment,
     Summary,
     Alert,
-    CountrySelector
+    Delivery,
+    BillingForm,
+    PaymentSelector,
+    OrderSynopsis
   },
   data() {
     return {
@@ -91,7 +78,9 @@ export default {
       items: [],
       alertVisible: false,
       total: 0,
-      isCard: false
+      isCard: false,
+      deliveryMethod: 'courier',
+      paymentMethod: 'courier'
     };
   },
   async mounted() {

@@ -1,18 +1,25 @@
 <template>
-  <div class="grid grid-cols-8 overflow-hidden col-gap-6 mb-5">
-    <img class="block col-span-3 w-full h-20 bg-gray-600" :src="`http://localhost:5174/${item.image}`" style="border-radius: 15px;" alt />
-    <div class="col-span-5">
-      <div class="flex">
-        <h6 class="text-sm font-semibold text-gray-800 flex-grow">{{ item.name }}</h6>
-        <button>
-          <svg class="w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/>
-          </svg>
-        </button>
-      </div>
-      <p class="text-xs truncate text-gray-600">{{ item.description }}</p>
-      <span class="text-sm text-gray-800">{{ item.price }} €</span>
-      <p class="text-xs truncate text-gray-600">{{ item.quantity }}X</p>
+  <div class="grid grid-cols-1 md:grid-cols-8 gap-4 mb-5 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+    <div class="md:col-span-2 flex justify-center items-center">
+      <a  class="shrink-0">
+        <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="h-20 w-20 object-cover rounded-lg" />
+      </a>
+    </div>
+    <div class="md:col-span-3 space-y-2">
+      <h5 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ item.name }}</h5>
+      <p class="text-sm text-gray-600 dark:text-gray-300">{{ item.description }}</p>
+    </div>
+    <div class="md:col-span-1 flex flex-col items-end justify-center">
+      <p class="text-sm text-gray-500 dark:text-gray-400">Unit Price</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100">${{ item.price }}</p>
+    </div>
+    <div class="md:col-span-1 flex flex-col items-end justify-center">
+      <p class="text-sm text-gray-500 dark:text-gray-400">Quantity</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100">{{ item.quantity }}</p>
+    </div>
+    <div class="md:col-span-1 flex flex-col items-end justify-center">
+      <p class="text-sm text-gray-500 dark:text-gray-400">Total Price</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100">${{ item.price * item.quantity }}</p>
     </div>
   </div>
 </template>

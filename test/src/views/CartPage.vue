@@ -48,7 +48,7 @@
                     />
                     <button
                       type="button"
-                      @click="incrementQuantity(index)"
+                      @click="incrementQuantity(item.productId)"
                       class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
                     >
                       <svg
@@ -268,7 +268,7 @@ const originalPrice = computed(() => {
 });
 
 const savings = computed(() => {
-  return 299; // Example savings value
+  return 0; // Example savings value
 });
 
 const storePickup = computed(() => {
@@ -276,7 +276,7 @@ const storePickup = computed(() => {
 });
 
 const tax = computed(() => {
-  return 799; // Example tax value
+  return 24; // Example tax value
 });
 
 const totalPrice = computed(() => {

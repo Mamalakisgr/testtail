@@ -527,6 +527,17 @@ app.delete('/api/cart-items/:productId', async (req, res) => {
     res.json({ message: 'Product removed from cart', totalItems });
   }
 });
+// Backend - Fetch product details for given IDs
+app.post('/api/product-details', async (req, res) => {
+  const { productIds } = req.body;
+  try {
+    const products = await Product.find({ _id: { $in: productIds } });
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching product details:', error);
+    res.status(500).send('Unable to fetch product details');
+  }
+});
 
 app.get('/api/wishlist-count', async (req, res) => {
   if (req.session && req.session.userId) {
