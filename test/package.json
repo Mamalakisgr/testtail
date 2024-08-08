@@ -4,19 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-     "postinstall": "npm install --prefix frontend && npm install --prefix backend && npm run build --prefix frontend",
-    "start": "node server.js",
-     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
-    "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
-    "test:unit": "cypress run --component",
-    "test:unit:dev": "cypress open --component",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "postinstall": "npm install --prefix frontend && npm install --prefix backend && npm run build --prefix frontend",
+    "start": "node backend/server.js",
+    "dev": "vite --prefix frontend",
+    "build": "vite build --prefix frontend",
+    "serve": "vite preview --prefix frontend"
   },
   "engines": {
     "node": ">=14.x"
