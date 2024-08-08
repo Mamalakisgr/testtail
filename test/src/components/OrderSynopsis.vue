@@ -17,7 +17,7 @@
   
             <dl class="flex items-center justify-between gap-4">
               <dt class="text-base font-normal text-gray-400 dark:text-black-400">Store Pickup</dt>
-              <dd class="text-base font-medium text-gray-400 dark:text-black">${{ storePickup }}</dd>
+              <dd class="text-base font-medium text-gray-400 dark:text-black">${{ deliveryPickup }}</dd>
             </dl>
   
             <dl class="flex items-center justify-between gap-4">
@@ -41,6 +41,24 @@
   
   export default {
     name: "OrderSynopsis",
+    props: {
+    totalPrice: {
+      type: Number,
+      required: true
+    },
+    originalPrice:{
+      type: Number,
+      required: true
+    },
+    savings:{
+      type:Number,
+      required: false
+    },
+    deliveryPickup: {
+      type: Number,
+      required: false
+    }
+  },
     setup() {
       const cartItems = ref([]);
   
@@ -65,7 +83,7 @@
         return 0; // Example savings value
       });
   
-      const storePickup = computed(() => {
+      const deliveryPickup = computed(() => {
         return 99; // Example store pickup value
       });
   
@@ -74,13 +92,13 @@
       });
   
       const totalPrice = computed(() => {
-        return originalPrice.value - savings.value + storePickup.value + tax.value;
+        return originalPrice.value - savings.value + deliveryPickup.value + tax.value;
       });
   
       return {
         originalPrice,
         savings,
-        storePickup,
+        deliveryPickup,
         tax,
         totalPrice
       };

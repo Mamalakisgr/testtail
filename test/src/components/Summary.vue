@@ -13,9 +13,9 @@
         <dt class="text-base font-normal text-gray-400 dark:text-black-400">Savings</dt>
         <dd class="text-base font-medium text-green-600">-${{ savings }}</dd>
       </div>
-      <div v-if="storePickup > 0" class="flex items-center justify-between">
+      <div v-if="deliveryPickup > 0" class="flex items-center justify-between">
         <dt class="text-base font-normal text-gray-400 dark:text-black-400">Store Pickup</dt>
-        <dd class="text-base font-medium text-gray-900 dark:text-black-100">${{ storePickup }}</dd>
+        <dd class="text-base font-medium text-gray-900 dark:text-black-100">${{ deliveryPickup }}</dd>
       </div>
       <div v-if="tax > 0" class="flex items-center justify-between">
         <dt class="text-base font-normal text-gray-400 dark:text-black-400">Tax</dt>
@@ -66,7 +66,7 @@ export default {
       return 0; // Example savings value
     });
 
-    const storePickup = computed(() => {
+    const deliveryPickup = computed(() => {
       return 99; // Example store pickup value
     });
 
@@ -75,14 +75,14 @@ export default {
     });
 
     const totalPrice = computed(() => {
-      return originalPrice.value - savings.value + storePickup.value + tax.value;
+      return originalPrice.value - savings.value + deliveryPickup.value + tax.value;
     });
 
     return {
       items: cartItems,
       originalPrice,
       savings,
-      storePickup,
+      deliveryPickup,
       tax,
       totalPrice
     };

@@ -1,8 +1,9 @@
 /* main.css */
+@import '/node_modules/flowbite-vue/dist/index.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '/node_modules/flowbite-vue/dist/index.css';
+
 
 #app {
  

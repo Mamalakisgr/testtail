@@ -4,6 +4,7 @@ import ProductList from '../views/ProductList.vue'
 import Register from '../views/LoginRegister.vue'
 import Cart from '../views/CartPage.vue'
 import ProductDetails from '../views/ProductDetails.vue'
+import OrderCompletion from '../views/OrderCompletion.vue'
 import BackofficeUploadProduct from '../views/admin-upload-product.vue'
 import BackofficeUploadTag from '../views/admin-upload-tag.vue'
 import EditProduct from '../views/admin-edit-products.vue'
@@ -55,6 +56,11 @@ const router = createRouter({
       path: '/checkout',
       name: 'checkout',
       component: Checkout
+    },
+    {
+      path: '/success-order',
+      name: 'orderCompletion',
+      component: OrderCompletion
     },
     {
       path: '/product-list',

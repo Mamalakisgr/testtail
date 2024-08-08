@@ -23,10 +23,23 @@
       </div>
     </div>
 
-    <!-- Search Bar for Large Screens -->
-    <div class="hidden lg:flex lg:items-center lg:space-x-4 ml-4">
-      <input type="text" placeholder="Search..."
+   <!-- Search Bar for Large Screens -->
+   <div class="relative hidden lg:flex lg:items-center lg:space-x-4 ml-4 ">
+      <input type="text" placeholder="Search..." v-model="searchQuery" @keyup="searchProducts"
         class="px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+       <button  @click="closeSearchResults">X</button>
+      <div v-if="searchResults.length" class="absolute bg-white text-black rounded-lg shadow-md mt-2 w-full z-50 max-h-60 overflow-y-auto top-9 right-0">
+        
+        <ul class="divide-y divide-gray-200">
+          <li v-for="product in searchResults" :key="product._id" class="p-4 hover:bg-gray-100 cursor-pointer">
+            <!-- <a :href="`/product-details/${product._id}`"> -->
+            <img :src="`http://localhost:5174/${product.image}`" alt="Product Image" class="w-10 h-10 object-cover mr-2">
+            <h3 class="text-lg font-semibold">{{ product.product_name }}</h3>
+            <p class="text-sm text-gray-600">{{ product.p_price }} USD</p>
+            <!-- </a> -->
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Navigation Links -->
@@ -150,11 +163,26 @@
   </transition>
   <CartSideMenu :isCartOpen="isCartOpen" :toggleCart="toggleCart" />
   <LoginModal :isVisible="isLoginModalVisible" :onClose="closeLoginModal" />
+  <!-- Search Results -->
+  <!-- <div v-if="searchResults.length" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start  z-50">
+    <div class="bg-white rounded-lg shadow-md w-full max-w-3xl p-8">
+      <h2 class="text-2xl font-semibold mb-4">Search Results</h2>
+      <button @click="closeSearchResults" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">Close</button>
+      <ul class="space-y-4">
+        <li v-for="product in searchResults" :key="product._id" class="p-4 bg-gray-100 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold">{{ product.product_name }}</h3>
+          <p class="text-gray-700">{{ product.description }}</p>
+          <p class="text-gray-900 font-semibold">{{ product.p_price }} USD</p>
+        </li>
+      </ul>
+     
+    </div>
+  </div> -->
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
-import { RouterLink } from 'vue-router';
+import { ref, reactive, onMounted, onUnmounted, computed, watch  } from 'vue';
+import { RouterLink, useRouter  } from 'vue-router';
 import axios from 'axios';
 import CartSideMenu from '../components/CartSideMenu.vue';
 import LoginModal from '../components/LoginModal.vue';
@@ -169,6 +197,9 @@ const isLoginModalVisible = ref(false);
 const cartCount = ref(0);
 const cartItems = ref(0);
 const auth = reactive({ loggedIn: false, userId: null });
+const router = useRouter();
+const searchQuery = ref('');
+const searchResults = ref([]);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -217,7 +248,17 @@ const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
-
+const searchProducts = async () => {
+  try {
+    const response = await axios.get(`http://localhost:5174/api/products?productName=${searchQuery.value}`, {
+      withCredentials: true,
+    });
+    searchResults.value = response.data;
+        console.log(response.data);
+  } catch (error) {
+    console.error('Failed to search products', error);
+  }
+};
 const fetchCategories = async () => {
   try {
     const response = await axios.get('http://localhost:5174/api/categories');
@@ -226,7 +267,9 @@ const fetchCategories = async () => {
     console.error('Failed to fetch categories', error);
   }
 };
-
+const closeSearchResults = () => {
+  searchResults.value = [];
+};
 eventBus.on('product-added', (newCount) => {
   cartCount.value = newCount;
 });
@@ -261,6 +304,11 @@ onMounted(() => {
     document.removeEventListener('focusin', handleFocusTrap);
   };
 });
+
+watch(() => router.currentRoute.value.path, () => {
+  isCartOpen.value = false;  // Close the cart when the route changes
+});
+
 const wishlistCount = computed(() => wishlist.value.length);
 
 </script>

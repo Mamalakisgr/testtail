@@ -6,6 +6,7 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 const User = require('./models/UserSchema');
+const Order = require('./models/Orders'); // Import the Order schema
 const Product = require('./models/Product');
 const Tag = require('./models/Tag');
 const Category = require('./models/Category');
@@ -251,7 +252,7 @@ app.delete('/api/products/:productId', async (req, res) => {
 
 
 app.get('/api/products', async (req, res) => {
-  const { category, tag,productId  } = req.query;
+  const { category, tag,productId,productName  } = req.query;
 
   try {
     let query = {};
@@ -263,6 +264,9 @@ app.get('/api/products', async (req, res) => {
     }
     if (productId) {
       query._id = productId;
+    }
+    if (productName) {
+      query.product_name = { $regex: new RegExp(productName, 'i') };
     }
     const products = await Product.find(query);
     const productsWithWishlistInfo = products.map(product => ({
@@ -639,7 +643,73 @@ app.post('/api/remove-from-wishlist', async (req, res) => {
     res.json({ message: 'Product removed from wishlist', count: req.session.wishlist.length });
   }
 });
+// Route to handle order creation
+app.post('/api/create-order', async (req, res) => {
+  const {
+    formData,
+    items,
+  } = req.body;
 
+  if (!req.session.userId) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const order = new Order({
+      order_id: new mongoose.Types.ObjectId().toString(), // generate a unique ID
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      address: formData.address,
+      city: formData.city,
+      zip: formData.zip,
+      country: formData.country,
+      totalPrice: formData.totalPrice,
+      paymentMethod: formData.paymentMethod,
+      deliveryMethod: formData.deliveryMethod,
+      billingFirstName: formData.billingFirstName,
+      billingLastName: formData.billingLastName,
+      billingEmail: formData.billingEmail,
+      billingAddress: formData.billingAddress,
+      billingCity: formData.billingCity,
+      billingZip: formData.billingZip,
+      billingCountry: formData.billingCountry,
+      customerId: user._id,
+      items: items.map(item => ({
+        productId: item.productId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+    });
+
+    await order.save();
+
+    res.status(201).json({ message: 'Order created successfully', order });
+  } catch (error) {
+    console.error('Error creating order:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+// Endpoint to get order details by ID
+app.get('/api/order/:orderId', async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.json(order);
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 // Middleware to validate ObjectId
 const isValidObjectId = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.productId)) {

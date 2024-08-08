@@ -145,7 +145,7 @@
 
                 <dl class="flex items-center justify-between gap-4">
                   <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Store Pickup</dt>
-                  <dd class="text-base font-medium text-gray-900 dark:text-white">${{ storePickup }}</dd>
+                  <dd class="text-base font-medium text-gray-900 dark:text-white">${{ deliveryPickup }}</dd>
                 </dl>
 
                 <dl class="flex items-center justify-between gap-4">
@@ -271,7 +271,7 @@ const savings = computed(() => {
   return 0; // Example savings value
 });
 
-const storePickup = computed(() => {
+const deliveryPickup = computed(() => {
   return 99; // Example store pickup value
 });
 
@@ -280,7 +280,7 @@ const tax = computed(() => {
 });
 
 const totalPrice = computed(() => {
-  return originalPrice.value - savings.value + storePickup.value + tax.value;
+  return originalPrice.value - savings.value + deliveryPickup.value + tax.value;
 });
 onMounted(()=>{
   fetchCartItems();

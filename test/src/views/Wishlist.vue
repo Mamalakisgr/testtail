@@ -30,7 +30,9 @@
                         <p class="text-base font-bold text-gray-900 dark:text-white">${{ item.p_price }}</p>
                       </div>
                     </div>
-  
+                    <div class="flex items-center gap-4 md:order-4">
+                    <button @click="addToCart(item._id, 1)" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</button> 
+                    </div>
                     <div class="flex items-center gap-4 md:order-5">
                       <button
                         type="button"
@@ -75,6 +77,7 @@
   import { fetchWishlist, wishlist, toggleWishlist } from '@/js/wishlist'; // Adjust the import path accordingly
   import axios from 'axios';
   import Footer from '../components/Footer.vue'
+  import { addToCart } from '@/js';
   const wishlistItems = ref([]);
   
   const fetchProductDetails = async (productIds) => {
