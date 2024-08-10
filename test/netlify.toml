@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/Homeview.vue"
+  from = "/"
   to = "/"
   status = 301
   force = false
