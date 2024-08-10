@@ -3,8 +3,8 @@
   command = "npm run build"
 
 [[redirects]]
-  from = "/old-path"
-  to = "/new-path"
+  from = "/Homeview.vue"
+  to = "/"
   status = 301
   force = false
   query = {path = ":path"}
