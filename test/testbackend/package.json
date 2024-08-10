@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npm install --prefix frontend && npm install --prefix backend && npm run build --prefix frontend",
+    "postinstall": "npm install --prefix test && npm install --prefix testbackend && npm run build",
     "start": "node server.js"
   },
   "author": "cz",

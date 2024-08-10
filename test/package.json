@@ -4,10 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-     "postinstall": "npm install --prefix test && npm install --prefix testbackend && npm run build --prefix frontend",
-    "start": "node server.js",
-     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "install-frontend": "npm install --prefix ./",
+    "install-backend": "npm install --prefix ../testbackend",
+    "build-frontend": "npm run build --prefix ./",
+    "build-backend": "npm run build --prefix ../testbackend",
+    "postinstall": "npm run install-frontend && npm run install-backend",
+    "build": "npm run build-frontend && npm run build-backend",
+    "start": "node testbackend/server.js",
+    "serve": "vue-cli-service serve",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -19,8 +23,10 @@
     "format": "prettier --write src/"
   },
   "engines": {
-    "node": ">=14.x"
+    "node": ">=14.x",
+    "npm": ">=9.x"
   },
+  "engineStrict": false,
   "dependencies": {
     "@chenfengyuan/vue-carousel": "^2.0.0",
     "@vueuse/core": "^10.9.0",
