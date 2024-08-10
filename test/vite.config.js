@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [
     vue(),
   ],
+  base: './', // Ensures correct path resolution in production
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
