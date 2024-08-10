@@ -1,7 +1,7 @@
 <template>
     <header class="backoffice-header">
 
-      <div class="products-section">
+      <div class="products-section p-2">
         Products
         <div class="products-dropdown">
           <router-link to="/admin/upload-product">Upload Products</router-link>
@@ -9,7 +9,8 @@
           <router-link to="/admin/upload-tag">Edit Tag/Category</router-link>
         </div>
       </div>
-      <button @click="logout">Logout</button>
+        <router-link to="/admin/edit-orders" class="p-2">Orders</router-link>
+      <button @click="logout" class="p-2 rounded-full">Logout</button>
     </header>
   </template>
   

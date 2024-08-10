@@ -25,27 +25,51 @@
 
    <!-- Search Bar for Large Screens -->
    <div class="relative hidden lg:flex lg:items-center lg:space-x-4 ml-4 ">
-      <input type="text" placeholder="Search..." v-model="searchQuery" @keyup="searchProducts"
-        class="px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-       <button  @click="closeSearchResults">X</button>
-      <div v-if="searchResults.length" class="absolute bg-white text-black rounded-lg shadow-md mt-2 w-full z-50 max-h-60 overflow-y-auto top-9 right-0">
-        
-        <ul class="divide-y divide-gray-200">
-          <li v-for="product in searchResults" :key="product._id" class="p-4 hover:bg-gray-100 cursor-pointer">
-            <!-- <a :href="`/product-details/${product._id}`"> -->
-            <img :src="`http://localhost:5174/${product.image}`" alt="Product Image" class="w-10 h-10 object-cover mr-2">
+    <input
+      type="text"
+      placeholder="Search..."
+      v-model="searchQuery"
+      @keyup="searchProducts"
+      class="px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 border-b focus:border-weather-secondary focus:outline-none focus:shadow"
+    />
+    <button @click="closeSearchResults" class="text-white bg-red-500 px-2 py-1 rounded">X</button>
+    <transition name="fade">
+      <div
+      v-if="searchResults.length"
+      class="absolute bg-white text-black rounded-lg shadow-md mt-2 w-full z-50 max-h-60 overflow-y-auto top-9 right-0"
+    >
+      <ul class="divide-y divide-gray-200">
+        <li
+          v-for="product in searchResults"
+          :key="product._id"
+          class="p-4 hover:bg-gray-100 cursor-pointer"
+        >
+          <a :href="`/product-details/${product._id}`">
+            <img
+              :src="`http://localhost:5174/${product.image}`"
+              alt="Product Image"
+              class="w-10 h-10 object-cover mr-2"
+            />
             <h3 class="text-lg font-semibold">{{ product.product_name }}</h3>
             <p class="text-sm text-gray-600">{{ product.p_price }} USD</p>
-            <!-- </a> -->
-          </li>
-        </ul>
-      </div>
+          </a>
+        </li>
+        <li v-if="hasMoreResults" @click="navigateToSearchPage" class="p-4 text-blue-500 hover:underline cursor-pointer">
+          Click to see all results
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+</svg>
+</li>
+          
+      </ul>
     </div>
+  </transition>
+  </div>
 
     <!-- Navigation Links -->
     <nav class="hidden lg:flex lg:items-center lg:space-x-4">
       <template v-if="auth.loggedIn">
-        <RouterLink to="/myaccount" class="block px-4 py-2">
+        <RouterLink to="/my-account" class="block px-4 py-2">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -162,7 +186,9 @@
     </div>
   </transition>
   <CartSideMenu :isCartOpen="isCartOpen" :toggleCart="toggleCart" />
-  <LoginModal :isVisible="isLoginModalVisible" :onClose="closeLoginModal" />
+   <transition name="modal-fade">
+    <LoginModal :isVisible="isLoginModalVisible" :onClose="closeLoginModal" />
+    </transition>
   <!-- Search Results -->
   <!-- <div v-if="searchResults.length" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start  z-50">
     <div class="bg-white rounded-lg shadow-md w-full max-w-3xl p-8">
@@ -181,7 +207,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, computed, watch  } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed, watch, provide, inject   } from 'vue';
 import { RouterLink, useRouter  } from 'vue-router';
 import axios from 'axios';
 import CartSideMenu from '../components/CartSideMenu.vue';
@@ -189,18 +215,16 @@ import LoginModal from '../components/LoginModal.vue';
 import eventBus from '../js/eventBus';
 import { FwbSidebar, FwbSidebarItemGroup, FwbSidebarItem, FwbSidebarDropdownItem } from 'flowbite-vue';
 import { wishlist, fetchWishlist } from '@/js/wishlist';  // Adjust the import path accordingly
-
+const auth = inject('auth')
 const categories = ref([]);
 const isMenuOpen = ref(false);
 const isCartOpen = ref(false);
 const isLoginModalVisible = ref(false);
 const cartCount = ref(0);
 const cartItems = ref(0);
-const auth = reactive({ loggedIn: false, userId: null });
 const router = useRouter();
 const searchQuery = ref('');
 const searchResults = ref([]);
-
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
@@ -217,16 +241,14 @@ const closeLoginModal = () => {
   isLoginModalVisible.value = false;
 };
 
-const fetchAuthStatus = async () => {
-  try {
-    const response = await axios.get('http://localhost:5174/api/auth', { withCredentials: true });
-    auth.loggedIn = response.data.loggedIn;
-    auth.userId = response.data.userId;
-  } catch (error) {
-    console.error('Failed to fetch auth status', error);
-  }
-};
+const hasMoreResults = computed(() => {
+  return searchResults.value.length >= 10;
+});
 
+const navigateToSearchPage = () => {
+  router.push({ name: 'SearchPage', query: { q: searchQuery.value } });
+};
+// Fetching cart count from API
 const fetchCartCount = () => {
   axios
     .get('http://localhost:5174/api/cart-count', { withCredentials: true })
@@ -237,6 +259,7 @@ const fetchCartCount = () => {
       console.error('Failed to fetch cart count', error);
     });
 };
+
 
 const fetchCartItems = async () => {
   try {
@@ -253,7 +276,7 @@ const searchProducts = async () => {
     const response = await axios.get(`http://localhost:5174/api/products?productName=${searchQuery.value}`, {
       withCredentials: true,
     });
-    searchResults.value = response.data;
+    searchResults.value = response.data.slice(0, 10); // Limit to first 10 results
         console.log(response.data);
   } catch (error) {
     console.error('Failed to search products', error);
@@ -270,6 +293,10 @@ const fetchCategories = async () => {
 const closeSearchResults = () => {
   searchResults.value = [];
 };
+// Listening for cart updates
+eventBus.on('cart-updated', (newCount) => {
+  cartCount.value = newCount; // Update the cart count
+});
 eventBus.on('product-added', (newCount) => {
   cartCount.value = newCount;
 });
@@ -278,13 +305,13 @@ eventBus.on('product-removed', (newCount) => {
 });
 
 onMounted(() => {
-  fetchAuthStatus();
+ 
   fetchCartCount();
   fetchCategories();
   fetchCartItems();
   fetchWishlist();  // Fetch the wishlist items on mount
 
-  eventBus.on('has-logged', fetchAuthStatus);
+ 
   eventBus.on('has-logged', fetchCartCount);
   const handleFocusTrap = (e) => {
     if (isMenuOpen.value && !e.target.closest('#mobile-menu')) {
@@ -295,7 +322,6 @@ onMounted(() => {
   };
   // Make sure to clean up the event listener when the component is unmounted
   onUnmounted(() => {
-    eventBus.off('has-logged', fetchAuthStatus);
     eventBus.off('has-logged', fetchCartCount);
   });
   document.addEventListener('focusin', handleFocusTrap);
@@ -366,7 +392,16 @@ nav a:first-of-type {
 .fade-leave-to {
   opacity: 0;
 }
+/* Transition for the modal fade effect */
+.modal-fade-enter-active, .modal-fade-leave-active {
+  z-index: 1000; /* Adjust this value */
+  transition: opacity 0.3s ease;
+}
 
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
 /* Focus visible styles for accessibility */
 button:focus-visible {
   outline: 2px solid white;

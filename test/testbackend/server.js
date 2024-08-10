@@ -58,6 +58,60 @@ function checkFileType(file, cb) {
     cb('Error: Images Only!');
   }
 }
+app.get('/api/admin/orders', async (req, res) => {
+  try {
+    // Here you might want to check if the logged-in user is an admin.
+    // Assuming you have some middleware to check for admin privileges:
+    // if (!req.user.isAdmin) {
+    //   return res.status(403).json({ message: "Access denied" });
+    // }
+
+    const orders = await Order.find().populate('customerId', 'firstName lastName email');
+    res.json(orders);
+  } catch (err) {
+    console.error('Failed to fetch orders', err);
+    res.status(500).json({ error: 'Failed to fetch orders' });
+  }
+});
+app.get('/api/my-orders', async (req, res) => {
+  try {
+    // Ensure the user is authenticated
+    if (!req.session.userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    // Fetch orders for the logged-in user
+    const userId = req.session.userId;
+    const orders = await Order.find({ customerId: userId });
+
+    // Return orders as a JSON response
+    res.json(orders);
+  } catch (err) {
+    console.error('Failed to fetch orders:', err);
+    res.status(500).json({ error: 'Failed to fetch orders' });
+  }
+});
+
+app.delete('/api/clear-cart', async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.cart = []; // Clear the cart items
+    await user.save();
+
+    res.json({ message: 'Cart cleared successfully' });
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 app.post('/api/registerUser', async (req, res) => {
   const { email, firstName, lastName, mobilePhone, phone, password } = req.body;
@@ -85,7 +139,30 @@ app.post('/api/registerUser', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+// Route to get user details by userId
+app.get('/api/users/:userId', async (req, res) => {
+  const userId = req.params.userId;
 
+  try {
+      // Fetch the user from the database using the userId
+      const user = await User.findById(userId);
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Send user details as a response
+      res.json({
+          name: user.firstName,
+          email: user.email,
+          lastName: user.lastName,
+          // Add more user details as needed
+      });
+  } catch (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -188,6 +265,17 @@ app.post('/api/upload-product', (req, res) => {
   });
 });
 
+
+// Define your logout route
+app.post('/api/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to logout' });
+    }
+    res.clearCookie('connect.sid'); // Adjust the cookie name if different
+    res.json({ message: 'Logout successful' });
+  });
+});
 
 
 // PUT route for updating a product
@@ -686,6 +774,7 @@ app.post('/api/create-order', async (req, res) => {
         price: item.price,
         quantity: item.quantity
       })),
+      status: 'pending',  // Set the default status to 'pending'
     });
 
     await order.save();
@@ -696,6 +785,31 @@ app.post('/api/create-order', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+app.put('/api/order/:orderId', async (req, res) => {
+  const { orderId } = req.params;
+  const updateData = req.body;
+
+  try {
+    // Find the order by ID and update it with the new data
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validation rules are applied
+    });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error('Error updating order:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+
 // Endpoint to get order details by ID
 app.get('/api/order/:orderId', async (req, res) => {
   try {

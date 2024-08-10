@@ -229,6 +229,6 @@ onMounted(() => {
   gap: 0.5rem;
 }
 option {
-  color: #000; /* Ensure the text color is visible */
+  color: #000; 
 }
 </style>

@@ -17,9 +17,10 @@ const OrderSchema = new mongoose.Schema({
   billingZip: { type: String, required: true },
   billingCountry: { type: String, required: true },
   originalPrice: { type: String, required: false},
-  totalPrice: { type: String, required: false},
+  totalPrice: { type: String, required: false, default: '0'},
   paymentMethod: { type: String, required: true },
   deliveryMethod: { type: String, required: true },
+  status: { type: String, required: false, default: 'pending' },
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   items: [
     {

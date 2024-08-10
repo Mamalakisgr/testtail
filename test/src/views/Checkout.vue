@@ -1,17 +1,37 @@
 <template>
   <div class="container mx-auto p-6 shadow-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
     <div class="grid grid-cols-1 lg:grid-cols-12 lg:gap-10 lg:pt-12">
-
       <!-- Shipping Form, Payment Selector, and Payment -->
       <div class="lg:col-span-8 space-y-6">
+        <!-- Shipping Form with the Same as Shipping Checkbox -->
         <ShippingForm
           ref="ShippingForm"
-          :formData="formData"
-          :sameAsShipping.sync="sameAsShipping"
-          :saveInfo.sync="saveInfo"
+          v-model:sameAsShipping="sameAsShipping"
+  v-model:saveInfo="saveInfo"
+  :formData="formData"
           @submit="handleFormSubmit"
           @toggle-shipping-address="toggleShippingAddress"
         />
+
+
+        <!-- Conditionally Display Billing Address Form -->
+        <div v-if="!sameAsShipping">
+          <h2 class="text-lg font-semibold mb-4">Billing Address</h2>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input type="text" v-model="formData.billingFirstName" placeholder="Billing First Name" class="p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />
+              <input type="text" v-model="formData.billingLastName" placeholder="Billing Last Name" class="p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />
+            </div>
+            <input type="email" v-model="formData.billingEmail" placeholder="Billing Email" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />
+            <input type="text" v-model="formData.billingAddress" placeholder="Billing Address" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input type="text" v-model="formData.billingCity" placeholder="Billing City" class="p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />
+              <input type="text" v-model="formData.billingZip" placeholder="Billing Zip Code" class="p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />
+            </div>
+            <input type="text" v-model="formData.billingCountry" placeholder="Billing Country" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />
+          </div>
+        </div>
+
         <Delivery v-model="formData.deliveryMethod" />
         <PaymentSelector v-model="formData.paymentMethod" />
         <Summary :items="items"></Summary>
@@ -29,8 +49,17 @@
             :savings="formData.savings" 
             :deliveryPickup="formData.deliveryPickup" 
             :tax="formData.tax" 
+            @update:totalPrice="updateTotalPrice"
           />
         </div>
+      </div>
+    </div>
+    <!-- Modal for Credit Card Payment -->
+    <div v-if="isCreditCardModalVisible" class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="bg-black bg-opacity-50 absolute inset-0" @click="closeModal"></div>
+      <div class="bg-white p-6 rounded-lg z-10">
+        <Payment @paymentSuccess="handlePaymentSuccess" />
+        <button @click="closeModal" class="mt-4">Cancel</button>
       </div>
     </div>
   </div>
@@ -45,6 +74,7 @@ import Delivery from "../components/Delivery.vue";
 import ShippingForm from "../components/BillingForm.vue";
 import PaymentSelector from "../components/PaymentSelector.vue";
 import OrderSynopsis from "../components/OrderSynopsis.vue";
+import eventBus from '../js/eventBus';
 
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -79,10 +109,12 @@ export default {
         billingCity: '',
         billingZip: '',
         billingCountry: '',
-        originalPrice: '',
-        totalPrice: ''
+        totalPrice: '',
+        savings: 0,
+        deliveryPickup: 99,
+        tax: 24,
       },
-      sameAsShipping: true,
+      sameAsShipping: false,
       saveInfo: false,
       submitted: false,
       submittedData: {},
@@ -92,7 +124,8 @@ export default {
       alertTitle: '',
       alertDescription: '',
       total: 0,
-      selectedPaymentMethod: ''
+      selectedPaymentMethod: '',
+      isCreditCardModalVisible: false // Add this property
     };
   },
   watch: {
@@ -158,39 +191,86 @@ export default {
     updatePaymentMethod(method) {
       this.selectedPaymentMethod = method;
     },
+    updateTotalPrice(newTotalPrice) {
+      this.formData.totalPrice = newTotalPrice;
+    },
+    closeModal() {
+      this.isCreditCardModalVisible = false;
+    },
+    handlePaymentSuccess() {
+      this.closeModal();
+      this.handleAlert('Success', 'Your payment was successful!', 'success');
+      // Additional logic for payment success can be added here
+    },
     async finishPayment() {
-      console.log(this.formData);
-      if (!this.formData.paymentMethod) {
-        this.handleAlert('Error', 'Please select a payment method.', 'error');
-        return;
-      }
+  console.log(this.formData);
+  if (!this.formData.paymentMethod) {
+    this.handleAlert('Error', 'Please select a payment method.', 'error');
+    return;
+  }
 
-      if (!this.formData.deliveryMethod) {
-        this.handleAlert('Error', 'Please select a delivery method.', 'error');
-        return;
-      }
+  if (!this.formData.deliveryMethod) {
+    this.handleAlert('Error', 'Please select a delivery method.', 'error');
+    return;
+  }
 
-      try {
-        // Here you can call the API to send the order
-        await axios.post('http://localhost:5174/api/create-order', {
-          formData: this.formData,
-          paymentMethod: this.selectedPaymentMethod,
-          items: this.items,
-        }, { withCredentials: true });
+  try {
+    if (this.formData.paymentMethod === 'credit-card') {
+      this.isCreditCardModalVisible = true;
+    } 
+    
+    // Call the API to create the order and get the order ID from the response
+    const response = await axios.post('http://localhost:5174/api/create-order', {
+      formData: this.formData,
+      paymentMethod: this.formData.paymentMethod,
+      items: this.items,
+    }, { withCredentials: true });
 
-        if (this.selectedPaymentMethod === 'credit-card') {
-          this.$router.push({ name: 'CreditCardPayment' });
-        } else if (this.selectedPaymentMethod === 'paypal') {
-          this.$router.push({ name: 'CreditCardPayment' });
-        } else {
-          this.handleAlert('Success', 'Your order has been successfully processed.', 'success');
-          console.log('Payment method:', this.selectedPaymentMethod);
-        }
-      } catch (error) {
-        console.error('Failed to process order', error);
-        this.handleAlert('Error', 'Failed to process your order. Please try again later.', 'error');
-      }
+    const orderID = response.data.order._id; // Assuming the order ID is returned as `_id`
+     // Clear the cart after order completion
+     await axios.delete('http://localhost:5174/api/clear-cart', { withCredentials: true });
+      // Update the cart counter to 0 after clearing the cart
+eventBus.emit('cart-updated', 0);  // Emit the event to update cart count to 0
+      if (this.formData.paymentMethod === 'credit-card' && PaymentForm.isValid) {
+      this.$router.push({ name: 'orderCompletion', params: { orderId: orderID } });
+    } else if (this.formData.paymentMethod === 'paypal') {
+      window.location.href = 'https://www.sandbox.paypal.com/';
+    } else if (this.formData.paymentMethod === 'cash') {
+      this.handleAlert('Success', 'Your order has been successfully processed.', 'success');
+      console.log('Payment method:', this.formData.paymentMethod);
+      this.$router.push({ name: 'orderCompletion', params: { orderId: orderID } });
     }
+
+  } catch (error) {
+    console.error('Failed to process order', error);
+    this.handleAlert('Error', 'Failed to process your order. Please try again later.', 'error');
+  }
+
+}
+
   }
 };
 </script>
+<style scoped>
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 100%;
+}
+</style>

@@ -1,4 +1,5 @@
 <template>
+  <div class="modal">
     <div class="col-span-1 lg:col-span-6 rounded-lg shadow-md focus:ring-blue-500 focus:border-blue-500 bg-white ">
      <h4 class="text-3xl text-black mb-5 rounded-lg shadow-md focus:ring-blue-500 focus:border-blue-500  p-2  m-2 shadow-md">Payment information</h4>
      <div class="p-10 text-black">
@@ -38,6 +39,7 @@
       </div>
      </div>
     </div>
+  </div>
    </template>
    <script>
    export default {

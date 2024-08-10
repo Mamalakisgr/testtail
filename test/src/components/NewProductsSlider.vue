@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-2xl mb-5 mt-5 font-bold text-center">New Products!</h1>
+    <h1 class="text-2xl mb-5 p-4 font-bold text-center  bg-gray-800 text-white dark:bg-gray-1000">Just Arrived!</h1>
     <Carousel :items-to-show="4" :wrap-around="true" class="w-80 bg-gray-200 rounded-lg">
       <Slide v-for="(product, index) in products" :key="index" class="p-2">
         <div class="relative w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">

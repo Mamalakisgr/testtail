@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1 class="text-2xl mb-5 mt-5 font-bold text-center">Offers!</h1>
-    <Carousel :items-to-show="3" :wrap-around="true" class="w-80 bg-gray-200 rounded-lg">
+    <h1 class="text-2xl p-4 font-bold text-center bg-white border  border-colour-white">Products with Offers!</h1>
+    <Carousel :items-to-show="3" :wrap-around="true" class="w-80 bg-gray-200 ">
       <Slide v-for="(product, index) in products" :key="index" class="p-2">
         <div class="relative w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
           <button

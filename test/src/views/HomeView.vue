@@ -1,4 +1,4 @@
-<template>
+<template >
 
   <!-- <div class="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
     <div class="flex-shrink-0">
@@ -19,9 +19,21 @@
   </div>
   
   <Carousel2/>
-  <ProductSlider/>
-<RegionOneJumbo/>
-  <NewProductsSlider/>
+  <ProductSlider class="shadow dark:bg-gray-900 dark:border-gray-700"/>
+<RegionOneJumbo class="bg-black"/>
+  <NewProductsSlider class="shadow dark:bg-gray-900 dark:border-gray-700"/>
+<section class="container  max-w-full  shadow dark:bg-gray-900 dark:border-gray-700 flex flex-col lg:flex-row items-center justify-between px-10 py-6 border-t border-white">
+  <div class="text-white mb-6 lg:mb-0 lg:mr-10">
+    <h2 class="text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-5xl">Region-2</h2>
+    <p class="text-lg font-normal text-gray-300 lg:text-xl mt-4 lg:mt-0">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </div>
+  <div class="flex-shrink-0 w-full lg:w-1/2 h-64 lg:h-80 rounded-lg">
+    <img src="../images/jacketcat.png" alt="Jacket Cat Image" class="w-full h-full object-cover rounded-lg">
+  </div>
+</section>
+<SeenRecently/>
   <Footer/>
 
 
@@ -34,6 +46,7 @@ import Footer from '../components/Footer.vue';
 import Carousel2 from '../components/CarouselMain.vue';
 import NewProductsSlider from '../components/NewProductsSlider.vue';
 import RegionOneJumbo from '../components/Region-One-Jumbo.vue';
+import SeenRecently from '@/components/SeenRecently.vue';
 </script>
 
 <style scoped>

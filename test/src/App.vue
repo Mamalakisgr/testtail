@@ -8,17 +8,43 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './components/Header.vue';
 import BackofficeHeader from './components/BackofficeHeader.vue';
 import Notification from './components/Notification.vue';
+import { ref, reactive, onMounted, onUnmounted, computed, watch, provide   } from 'vue';
+import eventBus from './js/eventBus';
+import axios from 'axios';
+
+const auth = reactive({ loggedIn: false, userId: null });
 
 const route = useRoute();
+provide('auth', auth);
 
 const currentHeader = computed(() => {
   return route.meta.requiresBackofficeHeader ? BackofficeHeader : Header;
 });
+
+const fetchAuthStatus = async () => {
+  try {
+    const response = await axios.get('http://localhost:5174/api/auth', { withCredentials: true });
+    
+    auth.loggedIn = response.data.loggedIn;
+    auth.userId = response.data.userId;
+  } catch (error) {
+    console.error('Failed to fetch auth status', error);
+  }
+};
+
+onMounted(() => {
+  fetchAuthStatus();
+  eventBus.on('has-logged', fetchAuthStatus);
+  })
+
+  onUnmounted(() => {
+    eventBus.off('has-logged', fetchAuthStatus);
+    eventBus.off('has-logged', fetchCartCount);
+  });
 </script>
 
 <style scoped>

@@ -7,11 +7,15 @@ import ProductDetails from '../views/ProductDetails.vue'
 import OrderCompletion from '../views/OrderCompletion.vue'
 import BackofficeUploadProduct from '../views/admin-upload-product.vue'
 import BackofficeUploadTag from '../views/admin-upload-tag.vue'
+import adminEditOrders from '@/views/admin-edit-orders.vue'
 import EditProduct from '../views/admin-edit-products.vue'
 import CategoryPage from '../views/ProductList.vue';
 import ProductDetailsId from '../views/ProductDetails.vue'
 import Checkout from '../views/Checkout.vue'
+import AccountPage from '../views/AccountPage.vue'
+import CreditCardPayment from '../views/CreditCardPayment.vue'
 import Wishlist from '../views/Wishlist.vue'
+import MyOrders from '@/views/MyOrders.vue'
 import { Carousel, Slide } from 'vue-carousel';
 import '../assets/main.css';
 
@@ -26,6 +30,17 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/my-account/my-orders',
+      name: 'myorders',
+      component: MyOrders
+    },
+    {
+      path: '/my-account',
+      name: 'AccountPage',
+      component: AccountPage,
+      
     },
     {
       path: '/about',
@@ -58,7 +73,12 @@ const router = createRouter({
       component: Checkout
     },
     {
-      path: '/success-order',
+      path: '/credit-card-payment',
+      name: 'CreditCardPayment',
+      component: CreditCardPayment
+    },
+    {
+      path: '/success-order/:orderId',
       name: 'orderCompletion',
       component: OrderCompletion
     },
@@ -92,6 +112,12 @@ const router = createRouter({
       path: '/admin/upload-tag',
       name: 'upload-tag',
       component: BackofficeUploadTag,
+      meta: { requiresBackofficeHeader: true }
+    },
+    {
+      path: '/admin/edit-orders',
+      name: 'edit-orders',
+      component: adminEditOrders,
       meta: { requiresBackofficeHeader: true }
     },
     {

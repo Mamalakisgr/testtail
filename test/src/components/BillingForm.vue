@@ -50,11 +50,11 @@
         </div>
       </div>
       <div class="mb-4">
-        <input type="checkbox" :checked="sameAsShipping" @change="updateSameAsShipping($event.target.checked)" />
+        <input type="checkbox" v-model="internalSameAsShipping" />
         <label class="ml-2">Billing address is the same as my Shipping address</label>
       </div>
       <div class="mb-8">
-        <input type="checkbox" :checked="saveInfo" @change="updateSaveInfo($event.target.checked)" />
+        <input type="checkbox" v-model="internalSaveInfo" />
         <label class="ml-2">Save this information for next time</label>
       </div>
     </div>
@@ -76,8 +76,25 @@ export default {
   },
   data() {
     return {
-      errors: {}
+      errors: {},
+      internalSameAsShipping: this.sameAsShipping, // Local state
+      internalSaveInfo: this.saveInfo, // Local state
     };
+  },
+  watch: {
+    internalSameAsShipping(newVal) {
+      this.$emit('update:sameAsShipping', newVal);
+      this.handleToggleShippingAddress(newVal);
+    },
+    sameAsShipping(newVal) {
+      this.internalSameAsShipping = newVal; // Keep in sync
+    },
+    internalSaveInfo(newVal) {
+      this.$emit('update:saveInfo', newVal);
+    },
+    saveInfo(newVal) {
+      this.internalSaveInfo = newVal; // Keep in sync
+    }
   },
   methods: {
     validateForm() {
@@ -112,12 +129,30 @@ export default {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
     },
-    updateSameAsShipping(value) {
-      this.$emit('update:sameAsShipping', value);
-      this.$emit('toggle-shipping-address', value);
+    handleToggleShippingAddress(value) {
+      if (value) {
+        this.copyShippingToBilling();
+      } else {
+        this.clearBillingAddress();
+      }
     },
-    updateSaveInfo(value) {
-      this.$emit('update:saveInfo', value);
+    copyShippingToBilling() {
+      this.formData.billingFirstName = this.formData.firstName;
+      this.formData.billingLastName = this.formData.lastName;
+      this.formData.billingEmail = this.formData.email;
+      this.formData.billingAddress = this.formData.address;
+      this.formData.billingCity = this.formData.city;
+      this.formData.billingZip = this.formData.zip;
+      this.formData.billingCountry = this.formData.country;
+    },
+    clearBillingAddress() {
+      this.formData.billingFirstName = '';
+      this.formData.billingLastName = '';
+      this.formData.billingEmail = '';
+      this.formData.billingAddress = '';
+      this.formData.billingCity = '';
+      this.formData.billingZip = '';
+      this.formData.billingCountry = '';
     }
   }
 };
