@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "postinstall": "npm install --prefix test && npm install --prefix testbackend && npm run build",
+    "postinstall": "npm install --prefix ./ && npm install --prefix ../testbackend && npm run build",
     "start": "node testbackend/server.js",
     "serve": "vue-cli-service serve",
     "build": "vite build",
