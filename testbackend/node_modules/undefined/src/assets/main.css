@@ -1,0 +1,75 @@
+/* main.css */
+@import '/node_modules/flowbite-vue/dist/index.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+#app {
+ 
+  font-weight: normal;
+}
+/* global.css */
+
+.text-gray-900 {
+  color: #1a202c;
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.dark .dark\:text-white {
+  color: #ffffff;
+}
+
+.bg-white {
+  background-color: #ffffff;
+}
+.dark .dark\:bg-gray-1000 {
+background-color: #12161e;
+}
+.dark .dark\:bg-gray-900 {
+  background-color: #1a202c;
+}
+
+.dark .dark\:bg-gray-800 {
+  background-color: #2d3748;
+}
+
+.border-gray-200 {
+  border-color: #edf2f7;
+}
+
+.dark .dark\:border-gray-700 {
+  border-color: #4a5568;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.md\:p-6 {
+  padding: 1.5rem;
+}
+
+a,
+.green {
+  text-decoration: none;
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+ nav a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
