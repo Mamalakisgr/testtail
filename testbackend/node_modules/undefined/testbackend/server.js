@@ -23,6 +23,13 @@ app.use(bodyParser.json());
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Serve static files (Frontend)
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Fallback to index.html for non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 // MongoDB Connection
 mongoose
   .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
