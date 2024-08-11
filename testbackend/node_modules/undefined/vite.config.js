@@ -18,7 +18,7 @@ export default defineConfig({
     port:5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5173', // Your backend server URL
+        target: 'https://main--dapper-beijinho-216f7a.netlify.app', // Your backend server URL
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
