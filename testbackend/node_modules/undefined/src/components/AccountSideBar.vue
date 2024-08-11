@@ -26,6 +26,7 @@
   import { inject } from 'vue';
   import { useRouter } from 'vue-router';
   import axios from 'axios';
+  import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
   export default {
     name: 'AccountSidebar',
@@ -40,7 +41,7 @@
   
       const logout = async () => {
   try {
-    await axios.post('http://localhost:5174/api/logout', {}, { withCredentials: true });
+    await axios.post(`${backendUrl}/api/logout`)
     // Clear local auth state and redirect to home or login page
     localStorage.removeItem('userId');
     auth.loggedIn = false;

@@ -8,17 +8,20 @@ export default defineConfig({
   plugins: [
     vue(),
   ],
+  define: {
+    'process.env': process.env, // Mimic process.env for compatibility
+  },
   base: './', // Ensures correct path resolution in production
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+     '@': fileURLToPath(new URL('./src', import.meta.url)),
     }
   },
   server: {
     port:5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5174', // Your backend server URL
+        target: process.env.VITE_BACKEND_URL || 'http://localhost:5174', // Use environment variable
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

@@ -46,7 +46,7 @@
         >
           <a :href="`/product-details/${product._id}`">
             <img
-              :src="`http://localhost:5174/${product.image}`"
+              :src="`${backendUrl || 'localhost:5174'}/${product.image}`"
               alt="Product Image"
               class="w-10 h-10 object-cover mr-2"
             />
@@ -215,6 +215,8 @@ import LoginModal from '../components/LoginModal.vue';
 import eventBus from '../js/eventBus';
 import { FwbSidebar, FwbSidebarItemGroup, FwbSidebarItem, FwbSidebarDropdownItem } from 'flowbite-vue';
 import { wishlist, fetchWishlist } from '@/js/wishlist';  // Adjust the import path accordingly
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+
 const auth = inject('auth')
 const categories = ref([]);
 const isMenuOpen = ref(false);
@@ -251,7 +253,7 @@ const navigateToSearchPage = () => {
 // Fetching cart count from API
 const fetchCartCount = () => {
   axios
-    .get('http://localhost:5174/api/cart-count', { withCredentials: true })
+    .get(`${backendUrl}/api/cart-count`, { withCredentials: true })
     .then((response) => {
       cartCount.value = response.data.count;
     })
@@ -263,7 +265,7 @@ const fetchCartCount = () => {
 
 const fetchCartItems = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/cart-items', {
+    const response = await axios.get(`${backendUrl}/api/cart-items`, {
       withCredentials: true,
     });
     cartItems.value = response.data.items;
@@ -273,7 +275,7 @@ const fetchCartItems = async () => {
 };
 const searchProducts = async () => {
   try {
-    const response = await axios.get(`http://localhost:5174/api/products?productName=${searchQuery.value}`, {
+    const response = await axios.get(`${backendUrl}/api/products?productName=${searchQuery.value}`, {
       withCredentials: true,
     });
     searchResults.value = response.data.slice(0, 10); // Limit to first 10 results
@@ -282,9 +284,11 @@ const searchProducts = async () => {
     console.error('Failed to search products', error);
   }
 };
+
+
 const fetchCategories = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/categories');
+    const response = await axios.get(`${backendUrl}/api/categories`);
     categories.value = response.data;
   } catch (error) {
     console.error('Failed to fetch categories', error);

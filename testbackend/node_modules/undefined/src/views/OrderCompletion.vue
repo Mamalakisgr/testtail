@@ -83,6 +83,7 @@
 
 <script>
 import axios from 'axios';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 export default {
   name: 'OrderCompletionPage',
@@ -100,7 +101,7 @@ export default {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5174/api/order/${orderId}`);
+      const response = await axios.get(`${backendUrl}/api/order/${orderId}`);
       this.order = response.data;
       this.calculateTotal();
     } catch (error) {

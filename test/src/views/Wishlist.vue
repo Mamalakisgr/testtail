@@ -24,8 +24,8 @@
               >
                 <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                   <a :href="`/product-details/${item._id}`" class="shrink-0 md:order-1">
-                    <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
-                    <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
+                    <img :src="`${backendUrl}/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
+                    <img :src="`${backendUrl}/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
                   </a>
 
                   <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
@@ -83,13 +83,14 @@ import { fetchWishlist, wishlist, toggleWishlist } from '@/js/wishlist'; // Adju
 import axios from 'axios';
 import Footer from '../components/Footer.vue'
 import { addToCart } from '@/js';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const wishlistItems = ref([]);
 const loading = ref(true);
 
 const fetchProductDetails = async (productIds) => {
   try {
-    const response = await axios.post('http://localhost:5174/api/product-details', {
+    const response = await axios.post(`${backendUrl}/api/product-details`, {
       productIds,
     });
     return response.data;

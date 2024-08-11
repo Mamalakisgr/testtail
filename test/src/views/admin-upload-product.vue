@@ -121,6 +121,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const product = ref({
   name: '',
@@ -139,7 +140,7 @@ const selectedTag = ref('');
 
 const fetchCategories = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/categories');
+    const response = await axios.get(`${backendUrl}/api/categories`);
     categories.value = response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -148,7 +149,7 @@ const fetchCategories = async () => {
 
 const fetchTags = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/tags');
+    const response = await axios.get(`${backendUrl}/api/tags`);
     tags.value = response.data;
   } catch (error) {
     console.error('Error fetching tags:', error);
@@ -181,7 +182,7 @@ const uploadProduct = async () => {
   formData.append('productImage', product.value.image);
 
   try {
-    const response = await axios.post('http://localhost:5174/api/upload-product', formData, {
+    const response = await axios.post(`${backendUrl}/api/upload-product`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

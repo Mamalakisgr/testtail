@@ -154,6 +154,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const orders = ref([]);
 const searchQuery = ref("");
@@ -169,7 +170,7 @@ const selectedOrder = ref(null);
 
 const fetchOrders = async () => {
   try {
-    const response = await axios.get("http://localhost:5174/api/admin/orders", {
+    const response = await axios.get("${backendUrl}/api/admin/orders", {
       withCredentials: true,
     });
     orders.value = response.data;
@@ -246,7 +247,7 @@ const closeModal = () => {
 
 const saveOrder = async () => {
   try {
-    await axios.put(`http://localhost:5174/api/order/${selectedOrder.value._id}`, selectedOrder.value, {
+    await axios.put(`${backendUrl}/api/order/${selectedOrder.value._id}`, selectedOrder.value, {
       withCredentials: true,
     });
     fetchOrders(); // Refresh the orders list

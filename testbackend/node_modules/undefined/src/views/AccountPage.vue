@@ -69,6 +69,7 @@
   <script>
   import axios from 'axios';
   import AccountSidebar from '../components/AccountSideBar.vue';
+  import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
   export default {
   components: {
@@ -99,13 +100,13 @@
     async created() {
       try {
         // Fetch authentication status
-        const authResponse = await axios.get('http://localhost:5174/api/auth', { withCredentials: true });
+        const authResponse = await axios.get(`${backendUrl}/api/auth`, { withCredentials: true });
         
         if (authResponse.data.loggedIn) {
           const userId = authResponse.data.userId;
   
           // Fetch user details using userId
-          const userResponse = await axios.get(`http://localhost:5174/api/users/${userId}`, { withCredentials: true });
+          const userResponse = await axios.get(`${backendUrl}/api/users/${userId}`, { withCredentials: true });
   
           // Assuming the user data contains name and email
           this.user.name = userResponse.data.name;

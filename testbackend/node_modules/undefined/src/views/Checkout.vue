@@ -75,6 +75,7 @@ import ShippingForm from "../components/BillingForm.vue";
 import PaymentSelector from "../components/PaymentSelector.vue";
 import OrderSynopsis from "../components/OrderSynopsis.vue";
 import eventBus from '../js/eventBus';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -92,6 +93,7 @@ export default {
   },
   data() {
     return {
+      backendUrl,
       formData: {
         firstName: '',
         lastName: '',
@@ -143,7 +145,7 @@ export default {
   methods: {
     async fetchCartItems() {
       try {
-        const response = await axios.get('http://localhost:5174/api/cart-items', { withCredentials: true });
+        const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
         this.items = response.data.items;
       } catch (error) {
         console.error('Failed to fetch cart items', error);
@@ -220,7 +222,7 @@ export default {
     } 
     
     // Call the API to create the order and get the order ID from the response
-    const response = await axios.post('http://localhost:5174/api/create-order', {
+    const response = await axios.post(`${backendUrl}/api/create-order`, {
       formData: this.formData,
       paymentMethod: this.formData.paymentMethod,
       items: this.items,
@@ -228,7 +230,7 @@ export default {
 
     const orderID = response.data.order._id; // Assuming the order ID is returned as `_id`
      // Clear the cart after order completion
-     await axios.delete('http://localhost:5174/api/clear-cart', { withCredentials: true });
+     await axios.delete(`${backendUrl}/api/clear-cart`, { withCredentials: true });
       // Update the cart counter to 0 after clearing the cart
 eventBus.emit('cart-updated', 0);  // Emit the event to update cart count to 0
       if (this.formData.paymentMethod === 'credit-card' && PaymentForm.isValid) {

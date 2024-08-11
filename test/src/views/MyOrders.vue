@@ -103,7 +103,7 @@
   
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5174/api/my-orders", {
+      const response = await axios.get("${backendUrl}/api/my-orders", {
         withCredentials: true,
       });
       orders.value = response.data;

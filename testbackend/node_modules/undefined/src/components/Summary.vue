@@ -33,6 +33,7 @@
 import Item from "./Item.vue";
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 export default {
   name: "Summary",
@@ -47,7 +48,7 @@ export default {
 
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get('http://localhost:5174/api/cart-items', { withCredentials: true });
+        const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
         cartItems.value = response.data.items;
       } catch (error) {
         console.error('Failed to fetch cart items', error);

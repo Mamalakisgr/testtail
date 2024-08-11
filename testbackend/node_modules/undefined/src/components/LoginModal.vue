@@ -40,6 +40,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import eventBus from '../js/eventBus';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const props = defineProps({
   isVisible: Boolean,
@@ -50,7 +51,7 @@ const loginData = ref({ email: '', password: '' });
 
 const loginUser = async () => {
   try {
-    const response = await axios.post('http://localhost:5174/api/login', loginData.value, { withCredentials: true });
+    const response = await axios.post(`${backendUrl}/api/login`, loginData.value, { withCredentials: true });
     console.log(response.data);
     closeModal();
     eventBus.emit('has-logged');

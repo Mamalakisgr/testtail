@@ -65,7 +65,7 @@
         <div class="flex flex-wrap gap-6">
           <div v-for="product in paginatedProducts" :key="product._id" class="relative group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <div class="fixed-dimensions">
-              <img class="object-cover object-center w-full h-full rounded-t-lg" :src="`http://localhost:5174/${product.image}`" alt="product image" />
+              <img class="object-cover object-center w-full h-full rounded-t-lg" :src="`${backendUrl}/${product.image}`" alt="product image" />
             </div>
             <div class="px-5 pb-5">
               <a :href="`/product-details/${product._id}`">
@@ -127,6 +127,7 @@ import { addToCart } from '@/js';
 import Footer from '../components/Footer.vue';
 import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';  // Adjust the import path accordingly
 import Breadcrumb from '../components/Breadcrump.vue';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const route = useRoute();
 const products = ref([]);
@@ -145,7 +146,7 @@ const itemsPerPage = ref(10);
 
 const fetchProducts = async (categoryId) => {
   try {
-    const response = await axios.get(`http://localhost:5174/api/products`, { params: { category: categoryId } });
+    const response = await axios.get(`${backendUrl}/api/products`, { params: { category: categoryId } });
     products.value = response.data;
   } catch (error) {
     console.error('Failed to fetch products', error);
@@ -154,7 +155,7 @@ const fetchProducts = async (categoryId) => {
 
 const fetchCategories = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/categories');
+    const response = await axios.get(`${backendUrl}/api/categories`);
     categories.value = response.data;
   } catch (error) {
     console.error('Failed to fetch categories', error);

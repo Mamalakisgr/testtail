@@ -8,7 +8,7 @@
           <div v-if="cartItems.length">
             <ul>
               <li v-for="(item, index) in cartItems" :key="index" class="mb-2 flex items-center">
-                <img :src="`http://localhost:5174/${item.image}`" alt="Product Image" class="w-10 h-10 object-cover mr-2">
+                <img :src="`${backendUrl}/${item.image}`" alt="Product Image" class="w-10 h-10 object-cover mr-2">
                 <div class="flex-1">
                   <a :href="`/product-details/${item.productId}`">
                   <span>{{ item.name }}</span>
@@ -39,6 +39,7 @@
 import { ref, watch } from 'vue';
 import axios from 'axios';
 import eventBus from '../js/eventBus';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const props = defineProps({
   isCartOpen: Boolean,
@@ -49,7 +50,7 @@ const cartItems = ref([]);
 
 const fetchCartItems = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/cart-items', { withCredentials: true });
+    const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
     cartItems.value = response.data.items;
   } catch (error) {
     console.error('Failed to fetch cart items', error);
@@ -65,7 +66,7 @@ const removeFromCart = async (productId) => {
   console.log('Removing product with ID:', productId); // Debug log
 
   try {
-    const response = await axios.delete(`http://localhost:5174/api/cart-items/${productId}`, { withCredentials: true });
+    const response = await axios.delete(`${backendUrl}/api/cart-items/${productId}`, { withCredentials: true });
     // Fetch updated cart items
     fetchCartItems();
     // Emit event to update cart count

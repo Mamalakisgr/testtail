@@ -2,12 +2,13 @@
 import axios from 'axios';
 import eventBus from './eventBus';
 import { ref, watch } from 'vue';
+
 const cartItems = ref([]);
 export default {
 };
 export const addToCart = async (productId) => {
   try {
-    const response = await axios.post('http://localhost:5174/api/add-to-cart', { productId, quantity: 1 }, { withCredentials: true });
+    const response = await axios.post(`${backendUrl}/api/add-to-cart`, { productId, quantity: 1 }, { withCredentials: true });
     eventBus.cartCount.value = response.data.totalItems;
     eventBus.emit('product-added', response.data.totalItems);
   } catch (error) {
@@ -22,7 +23,7 @@ export const removeFromCart = async (productId) => {
   }
 
   try {
-    const response = await axios.delete(`http://localhost:5174/api/cart-items/${productId}`, { withCredentials: true });
+    const response = await axios.delete(`${backendUrl}/api/cart-items/${productId}`, { withCredentials: true });
     // Fetch updated cart items
     fetchCartItems();
     // Emit event to update cart count
@@ -33,12 +34,13 @@ export const removeFromCart = async (productId) => {
 };
 export const fetchCartItems = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/cart-items', { withCredentials: true });
+    const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
     cartItems.value = response.data.items;
   } catch (error) {
     console.error('Failed to fetch cart items', error);
   }
 };
+export const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5174';
 
 watch(() => (newVal) => {
   if (newVal) {

@@ -3,7 +3,7 @@
     <div class="container px-5 py-24 mx-auto ">
       <Breadcrumb :category="product.p_category" :product="product.product_name" />
       <div class="lg:w-4/5 mx-auto flex flex-wrap rounded dark:bg-gray-900 p-2">
-        <img :alt="product.product_name" class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200 h-full max-w-sm max-h-96 " :src="`http://localhost:5174/${product.image}`" />
+        <img :alt="product.product_name" class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200 h-full max-w-sm max-h-96 " :src="`${backendUrl}/${product.image}`" />
         <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0 ">
           <h2 class="text-sm title-font  tracking-widest">{{ product.p_brand }}</h2>
           <h1 class=" text-3xl title-font font-medium mb-1">{{ product.product_name }}</h1>
@@ -82,6 +82,7 @@ import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';  // 
 import Footer from '../components/Footer.vue';
 import Breadcrumb from '../components/Breadcrump.vue';
 import SeenRecently from '@/components/SeenRecently.vue';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const route = useRoute();
 const productId = route.params.productId;
@@ -92,7 +93,7 @@ const selectedSize = ref(sizes.value[0]);
 
 const fetchProduct = async () => {
   try {
-    const response = await axios.get(`http://localhost:5174/api/products`, {
+    const response = await axios.get(`${backendUrl}ducts`, {
       params: {
         productId: route.params.productId
       }

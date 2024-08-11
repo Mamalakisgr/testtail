@@ -93,7 +93,8 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
-  
+  import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+
   const categories = ref([]);
   const availableTags = ref([]);
   const selectedProduct = ref(null);
@@ -104,7 +105,7 @@
   
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5174/api/categories');
+      const response = await axios.get(`${backendUrl}/api/categories`);
       categories.value = response.data.map(category => ({
         name: category,
         products: []
@@ -112,7 +113,7 @@
   
       for (const category of categories.value) {
         try {
-          const productsResponse = await axios.get(`http://localhost:5174/api/products`, {
+          const productsResponse = await axios.get(`${backendUrl}/api/products`, {
             params: { category: category.name }
           });
           category.products = productsResponse.data;
@@ -127,7 +128,7 @@
   
   const fetchTags = async () => {
     try {
-      const response = await axios.get('http://localhost:5174/api/tags');
+      const response = await axios.get(`${backendUrl}/api/tags`);
       availableTags.value = response.data;
     } catch (error) {
       console.error('Error fetching tags:', error);
@@ -172,7 +173,7 @@
     }
   
     try {
-      const response = await axios.put(`http://localhost:5174/api/products/${selectedProduct.value._id}`, formData, {
+      const response = await axios.put(`${backendUrl}/api/products/${selectedProduct.value._id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -196,7 +197,7 @@
   
   const deleteProduct = async () => {
     try {
-      const response = await axios.delete(`http://localhost:5174/api/products/${productIdToDelete.value}`);
+      const response = await axios.delete(`${backendUrl}/api/products/${productIdToDelete.value}`);
       console.log('Product deleted successfully:', response.data);
       fetchCategories(); // Refresh the categories and products data after deletion
       cancelDelete(); // Hide the modal after deletion

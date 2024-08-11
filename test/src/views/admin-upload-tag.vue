@@ -42,7 +42,8 @@
   <script setup>
   import { ref } from 'vue';
   import axios from 'axios';
-  
+  import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+
   const tagName = ref('');
   const categoryName = ref('');
   const tagMessage = ref('');
@@ -52,7 +53,7 @@
   
   const uploadTag = async () => {
     try {
-      const response = await axios.post('http://localhost:5174/api/upload-tag', { name: tagName.value });
+      const response = await axios.post(`${backendUrl}/api/upload-tag`, { name: tagName.value });
       tagMessage.value = response.data.message || 'Tag uploaded successfully';
       tagMessageClass.value = 'text-green-500';
       tagName.value = '';
@@ -64,7 +65,7 @@
   
   const uploadCategory = async () => {
     try {
-      const response = await axios.post('http://localhost:5174/api/upload-category', { name: categoryName.value });
+      const response = await axios.post(`${backendUrl}/api/upload-category`, { name: categoryName.value });
       categoryMessage.value = response.data.message || 'Category uploaded successfully';
       categoryMessageClass.value = 'text-green-500';
       categoryName.value = '';

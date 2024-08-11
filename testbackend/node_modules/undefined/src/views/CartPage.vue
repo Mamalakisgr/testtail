@@ -18,8 +18,8 @@
             >
               <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                 <a href="#" class="shrink-0 md:order-1">
-                  <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
-                  <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
+                  <img :src="`${backendUrl}/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
+                  <img :src="`${backendUrl}/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
                 </a>
 
                 <label for="counter-input" class="sr-only">Choose quantity:</label>
@@ -221,10 +221,11 @@ import axios from 'axios';
 import eventBus from '../js/eventBus';
 import Footer from '../components/Footer.vue';
 const cartItems = ref([]);
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const fetchCartItems = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/cart-items', { withCredentials: true });
+    const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
     cartItems.value = response.data.items;
   } catch (error) {
     console.error('Failed to fetch cart items', error);
@@ -248,7 +249,7 @@ const removeItem = async (productId) => {
   }
 
   try {
-    const response = await axios.delete(`http://localhost:5174/api/cart-items/${productId}`, { withCredentials: true });
+    const response = await axios.delete(`${backendUrl}/api/cart-items/${productId}`, { withCredentials: true });
     // Fetch updated cart items
     fetchCartItems();
     // Emit event to update cart count

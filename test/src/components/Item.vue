@@ -2,7 +2,7 @@
   <div class="grid grid-cols-1 md:grid-cols-8 gap-4 mb-5 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
     <div class="md:col-span-2 flex justify-center items-center">
       <a  class="shrink-0">
-        <img :src="`http://localhost:5174/${item.image}`" alt="product image" class="h-20 w-20 object-cover rounded-lg" />
+        <img :src="`${backendUrl}/${item.image}`" alt="product image" class="h-20 w-20 object-cover rounded-lg" />
       </a>
     </div>
     <div class="md:col-span-3 space-y-2">
@@ -24,9 +24,16 @@
   </div>
 </template>
 
-<script>
+<script >
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+
 export default {
   name: "Item",
+  data() {
+    return {
+      backendUrl, // Assign backendUrl here
+    };
+  },
   props: {
     item: Object
   }

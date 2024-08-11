@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { ref } from 'vue';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 export const wishlist = ref([]);
 
 export const fetchWishlist = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/wishlist-items', {
+    const response = await axios.get(`${backendUrl}/api/wishlist-items`, {
       withCredentials: true,
     });
     wishlist.value = response.data;
@@ -18,14 +19,14 @@ export const toggleWishlist = async (productId) => {
   try {
     if (wishlist.value.includes(productId)) {
       await axios.post(
-        'http://localhost:5174/api/remove-from-wishlist',
+        `${backendUrl}/api/remove-from-wishlist`,
         { productId },
         { withCredentials: true }
       );
       wishlist.value = wishlist.value.filter((id) => id !== productId);
     } else {
       await axios.post(
-        'http://localhost:5174/api/add-to-wishlist',
+        `${backendUrl}/api/add-to-wishlist`,
         { productId },
         { withCredentials: true }
       );

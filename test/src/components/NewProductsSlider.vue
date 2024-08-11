@@ -40,7 +40,7 @@
             </svg>
           </button>
           <a class="w-full max-w-xs">
-            <img class="p-4 rounded-t-lg" :src="`http://localhost:5174/${product.image}`" alt="product image" />
+            <img class="p-4 rounded-t-lg" :src="`${backendUrl}/${product.image}`" alt="product image" />
           </a>
           <div class="px-5 pb-5">
             <a class="w-full max-w-xs h-xs max-h-xs" :href="`/product-details/${product._id}`">
@@ -66,12 +66,13 @@ import 'vue3-carousel/dist/carousel.css';
 import { addToCart } from '@/js';
 import ProgressBar from '../components/ProgressBar.vue';
 import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';  // Adjust the import path accordingly
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const products = ref([]);
 
 const fetchProducts = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/products', {
+    const response = await axios.get(`${backendUrl}/api/products`, {
       params: { tag: 'new' }
     });
     products.value = response.data;
