@@ -5,8 +5,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "backendinstall":"\"npm run backend\"",
-    "backend": "cd ../testbackend && node server.js",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd testbackend && npm install && npm start",
+    "client": "npm install && npm run build && serve -s dist",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
   },
