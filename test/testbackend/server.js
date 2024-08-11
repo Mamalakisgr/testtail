@@ -16,18 +16,7 @@ const bcrypt = require('bcrypt');
 const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app'];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin like mobile apps or curl requests
-    if (!origin) return callback(null, true);
-    
-    // Check if the origin is in the allowedOrigins array
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    
-    return callback(null, true);
-  },
+  origin: 'https://main--dapper-beijinho-216f7a.netlify.app', // Allow requests from Netlify
   credentials: true,
 }));
 app.use(bodyParser.json());
