@@ -11,7 +11,6 @@ const Product = require('./models/Product');
 const Tag = require('./models/Tag');
 const Category = require('./models/Category');
 const app = express();
-const PORT = 5174;
 const bcrypt = require('bcrypt');
 
 app.use(cors({ origin: 'https://main--dapper-beijinho-216f7a.netlify.app', credentials: true }));
@@ -831,7 +830,3 @@ const isValidObjectId = (req, res, next) => {
   }
   next();
 };
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
