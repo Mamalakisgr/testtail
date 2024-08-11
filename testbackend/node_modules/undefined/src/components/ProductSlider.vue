@@ -1,9 +1,13 @@
 <template>
   <div>
-    <h1 class="text-2xl p-4 font-bold text-center bg-white border  border-colour-white">Products with Offers!</h1>
-    <Carousel :items-to-show="3" :wrap-around="true" class="w-80 bg-gray-200 ">
+    <h1 class="text-2xl p-4 font-bold text-center bg-white border border-colour-white">Products with Offers!</h1>
+    <Carousel 
+      :items-to-show="itemsToShow" 
+      :wrap-around="true" 
+      class="bg-gray-200"
+    >
       <Slide v-for="(product, index) in products" :key="index" class="p-2">
-        <div class="relative w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div class="relative w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
           <button
             @click="toggleWishlist(product._id)"
             class="absolute top-2 right-2 text-gray-500 hover:text-red-500"
@@ -39,16 +43,21 @@
               />
             </svg>
           </button>
-          <a class="w-full max-w-xs">
-            <img class="p-4 rounded-t-lg" :src="`${backendUrl}/${product.image}`" alt="product image" />
+          <a class="block">
+            <img class="p-4 rounded-t-lg object-cover" :src="`${backendUrl}/${product.image}`" alt="product image" />
           </a>
           <div class="px-5 pb-5">
-            <a class="w-full max-w-xs h-xs max-h-xs" :href="`/product-details/${product._id}`">
-              <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ product.product_name }}</h5>
+            <a class="block" :href="`/product-details/${product._id}`">
+              <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{{ product.product_name }}</h5>
             </a>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ product.p_price }} €</span>
-              <button @click="addToCart(product._id, 1)" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</button>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xl font-bold text-gray-900 dark:text-white">{{ product.p_price }} €</span>
+              <button 
+                @click="addToCart(product._id, 1)" 
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Add to cart
+              </button>
             </div>
           </div>
         </div>
@@ -58,7 +67,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Carousel, Slide } from 'vue3-carousel';
 import axios from 'axios';
 import { addToCart } from '@/js';
@@ -68,7 +77,18 @@ import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 // const cartCount = ref(0);
 const products = ref([]);
+const itemsToShow = ref(3); // Default to 3 items
 
+// Adjust itemsToShow based on screen width
+const updateItemsToShow = () => {
+  if (window.innerWidth < 640) {
+    itemsToShow.value = 2;
+  } else if (window.innerWidth < 1024) {
+    itemsToShow.value = 2;
+  } else {
+    itemsToShow.value = 3;
+  }
+};
 const fetchProductsOffer = async () => {
   try {
     const response = await axios.get(`${backendUrl}/api/products`, {
@@ -85,7 +105,13 @@ const fetchProductsOffer = async () => {
 onMounted(() => {
   fetchProductsOffer();
   fetchWishlist();
+  updateItemsToShow();
+  window.addEventListener('resize', updateItemsToShow);
 
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateItemsToShow);
 });
 </script>
 
@@ -98,5 +124,18 @@ onMounted(() => {
 img {
   height: 300px;
   width: 400px;
+}
+@media (max-width: 1024px) {
+  .carousel {
+  width: 100%;
+  max-width: 100%;
+  margin: auto;
+}
+
+img {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+}
 }
 </style>
