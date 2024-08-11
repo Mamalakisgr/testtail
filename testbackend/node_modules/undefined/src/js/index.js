@@ -40,7 +40,7 @@ export const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
-export const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5174';
+export const backendUrl = 'https://main--dapper-beijinho-216f7a.netlify.app';
 
 watch(() => (newVal) => {
   if (newVal) {

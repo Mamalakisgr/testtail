@@ -16,7 +16,7 @@ const bcrypt = require('bcrypt');
 const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app'];
 
 app.use(cors({
-  origin: 'https://main--dapper-beijinho-216f7a.netlify.app', // Allow requests from Netlify
+  origin: 'http://localhost:5173', // Allow requests from Netlify
   credentials: true,
 }));
 app.use(bodyParser.json());
@@ -26,9 +26,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Serve static files (Frontend)
 
 // Fallback to index.html for non-API routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 // MongoDB Connection
 mongoose
   .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
