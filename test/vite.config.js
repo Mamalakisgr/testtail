@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5174';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -21,7 +21,7 @@ export default defineConfig({
     port:5173,
     proxy: {
       '/api': {
-        target: backendUrl || 'http://localhost:5174', // Use environment variable
+        target: 'https://main--dapper-beijinho-216f7a.netlify.app', // Use environment variable
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
