@@ -14,7 +14,7 @@ const app = express();
 const PORT = 5174;
 const bcrypt = require('bcrypt');
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'https://main--dapper-beijinho-216f7a.netlify.app', credentials: true }));
 app.use(bodyParser.json());
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
