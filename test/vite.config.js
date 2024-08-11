@@ -2,8 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { backendUrl } from '@/js/index'; // Adjust the path if necessary
-
+const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5174';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
