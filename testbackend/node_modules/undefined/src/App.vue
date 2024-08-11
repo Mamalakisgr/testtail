@@ -15,6 +15,7 @@ import Notification from './components/Notification.vue';
 import { ref, reactive, onMounted, onUnmounted, computed, watch, provide   } from 'vue';
 import eventBus from './js/eventBus';
 import axios from 'axios';
+import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const auth = reactive({ loggedIn: false, userId: null });
 
@@ -27,7 +28,7 @@ const currentHeader = computed(() => {
 
 const fetchAuthStatus = async () => {
   try {
-    const response = await axios.get('http://localhost:5174/api/auth', { withCredentials: true });
+    const response = await axios.get(`${backendUrl}/api/auth`, { withCredentials: true });
     
     auth.loggedIn = response.data.loggedIn;
     auth.userId = response.data.userId;
