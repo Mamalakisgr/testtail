@@ -22,7 +22,8 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+app.use(express.static(__dirname + '/public'))
+app.get(/./, (req, res) => res.sendFile(__dirname + '/public/index.html'));
 // Serve static files (Frontend)
 
 // Fallback to index.html for non-API routes

@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-
+import path from 'path';
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -17,13 +17,13 @@ export default defineConfig({
      '@': fileURLToPath(new URL('./src', import.meta.url)),
     }
   },
+  outDir: path.resolve(__dirname, '../testbackend/public'),
   server: {
 
     proxy: {
       '/api': {
         target: 'https://main--dapper-beijinho-216f7a.netlify.app', // Use environment variable
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }
