@@ -17,7 +17,7 @@ export default defineConfig({
      '@': fileURLToPath(new URL('./src', import.meta.url)),
     }
   },
-  outDir: path.resolve(__dirname, '../testbackend/public'),
+  outDir: path.resolve(__dirname, 'testbackend/public'),
   server: {
 
     proxy: {
