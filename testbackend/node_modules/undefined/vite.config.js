@@ -18,7 +18,6 @@ export default defineConfig({
     }
   },
   server: {
-    port:5173,
     proxy: {
       '/api': {
         target: 'https://main--dapper-beijinho-216f7a.netlify.app', // Use environment variable
