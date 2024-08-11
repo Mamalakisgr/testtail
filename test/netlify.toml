@@ -1,7 +1,0 @@
-
-
-[[redirects]]
-  from = "/api/*"
-  to = "https://main--dapper-beijinho-216f7a.netlify.app/:splat"
-  status = 200
-  force = true
