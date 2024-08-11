@@ -24,7 +24,6 @@ app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: t
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static files (Frontend)
-app.use(express.static(path.join(__dirname, 'dist')));
 
 // Fallback to index.html for non-API routes
 app.get('*', (req, res) => {
