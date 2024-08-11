@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-import path from 'path';
+
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -8,22 +8,19 @@ export default defineConfig({
   plugins: [
     vue(),
   ],
-  define: {
-    'process.env': process.env, // Mimic process.env for compatibility
-  },
   base: './', // Ensures correct path resolution in production
   resolve: {
     alias: {
-     '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  outDir: path.resolve(__dirname, 'testbackend/public'),
   server: {
-
+    port:5173,
     proxy: {
       '/api': {
-        target: 'https://main--dapper-beijinho-216f7a.netlify.app', // Use environment variable
+        target: 'http://localhost:5173', // Your backend server URL
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

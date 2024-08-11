@@ -13,23 +13,12 @@ const Category = require('./models/Category');
 const app = express();
 const PORT = 5174;
 const bcrypt = require('bcrypt');
-const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app'];
 
-app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from Netlify
-  credentials: true,
-}));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(bodyParser.json());
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(express.static(__dirname + '/public'))
-app.get(/./, (req, res) => res.sendFile(__dirname + '/public/index.html'));
-// Serve static files (Frontend)
 
-// Fallback to index.html for non-API routes
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
 // MongoDB Connection
 mongoose
   .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
