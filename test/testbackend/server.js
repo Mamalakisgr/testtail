@@ -454,7 +454,7 @@ app.get('/api/cart-count', async (req, res) => {
 
 // Define a new upload middleware for handling image updates
 const uploadUpdate = multer({
-  storage: storage,
+  storage: multer.memoryStorage(), // Use memory storage instead
   limits: { fileSize: 1000000 }, // Limit file size to 1MB
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
