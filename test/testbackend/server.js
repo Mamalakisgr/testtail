@@ -27,7 +27,8 @@ app.use(cors({
     return callback(null, true);
   },
   credentials: true,
-}));app.use(bodyParser.json());
+}));
+app.use(bodyParser.json());
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
@@ -37,8 +38,11 @@ app.use(session({
     httpOnly: true,
     sameSite: 'lax', // Helps mitigate CSRF attacks
   },
-  store: new MongoStore({ mongooseConnection: mongoose
-    .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0') })
+  store: MongoStore.create({
+    mongoUrl: 'mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/your-database-name',
+    ttl: 14 * 24 * 60 * 60, // 14 days
+    autoRemove: 'native' // Default
+  })
 }));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
