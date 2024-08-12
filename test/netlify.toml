@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/api/*"
-  to = "http://localhost:5174/api/:splat"
+  to = "test/netlify/functions/:splat"
   status = 200
   force = true
 
