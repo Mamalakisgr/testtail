@@ -38,19 +38,19 @@ mongoose
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch((error) => console.log('Failed to connect to MongoDB:', error));
 
-// Set up storage engine
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
-});
+// // Set up storage engine
+// const storage = multer.diskStorage({
+//   destination: './uploads/',
+//   filename: function (req, file, cb) {
+//     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+//   }
+// });
 
-// Initialize upload
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 1000000 }, // 1MB file size limit
-}).single('productImage');
+// // Initialize upload
+// const upload = multer({
+//   storage: multer.memoryStorage(),
+//   limits: { fileSize: 1000000 }, // 1MB file size limit
+// }).single('productImage');
 
 
 // Check file type
