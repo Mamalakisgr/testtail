@@ -30,8 +30,13 @@ app.use(cors({
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 1 day in milliseconds
+  saveUninitialized: false, // Avoid creating sessions for unauthenticated users
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    secure: true, // Set true if using HTTPS
+    httpOnly: true,
+    sameSite: 'lax', // Adjust based on your requirements
+  }  
 }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
