@@ -83,9 +83,15 @@ import Footer from '../components/Footer.vue';
 import Breadcrumb from '../components/Breadcrump.vue';
 import SeenRecently from '@/components/SeenRecently.vue';
 import { backendUrl } from '@/js/index'; // Adjust the path if necessary
-
+// Add props definition
+const props = defineProps({
+  productId: {
+    type: String,
+    required: true,
+  },
+});
 const route = useRoute();
-const productId = route.params.productId;
+const productId = props.productId || route.params.productId;
 
 const product = ref({});
 const sizes = ref(['SM', 'M', 'L', 'XL']);
@@ -93,9 +99,9 @@ const selectedSize = ref(sizes.value[0]);
 
 const fetchProduct = async () => {
   try {
-    const response = await axios.get(`${backendUrl}ducts`, {
+    const response = await axios.get(`${backendUrl}/api/products`, {
       params: {
-        productId: route.params.productId
+        productId: productId
       }
     });
     
@@ -117,6 +123,7 @@ onMounted(() => {
 function storeRecentProduct(product) {
   // Validate the product data
   if (!product._id || !product.product_name || !product.image) {
+    
     console.error('Invalid product data', product);
     return;
   }
