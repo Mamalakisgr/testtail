@@ -11,10 +11,22 @@ const Product = require('./models/Product');
 const Tag = require('./models/Tag');
 const Category = require('./models/Category');
 const app = express();
+const PORT = 5174;
 const bcrypt = require('bcrypt');
 
-app.use(cors({ origin: 'https://main--dapper-beijinho-216f7a.netlify.app', credentials: true }));
-app.use(bodyParser.json());
+const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+}));app.use(bodyParser.json());
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -830,3 +842,7 @@ const isValidObjectId = (req, res, next) => {
   }
   next();
 };
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
