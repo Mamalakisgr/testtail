@@ -15,7 +15,7 @@ const PORT = 5174;
 const bcrypt = require('bcrypt');
 const MongoStore = require('connect-mongo');
 
-const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app'];
+const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app', 'https://testtail-xs2f.vercel.app'];
 
 app.use(cors({
   origin: function (origin, callback) {
