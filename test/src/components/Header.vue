@@ -44,7 +44,7 @@
           :key="product._id"
           class="p-4 hover:bg-gray-100 cursor-pointer"
         >
-          <a :href="`/product-details/${product._id}`">
+          <RouterLink :to="`/product-details/${product._id}`">
             <img
               :src="`${backendUrl || 'localhost:5174'}/${product.image}`"
               alt="Product Image"
@@ -52,7 +52,7 @@
             />
             <h3 class="text-lg font-semibold">{{ product.product_name }}</h3>
             <p class="text-sm text-gray-600">{{ product.p_price }} USD</p>
-          </a>
+          </RouterLink>
         </li>
         <li v-if="hasMoreResults" @click="navigateToSearchPage" class="p-4 text-blue-500 hover:underline cursor-pointer">
           Click to see all results

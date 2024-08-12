@@ -23,13 +23,13 @@
                 class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
               >
                 <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                  <a :href="`/product-details/${item._id}`" class="shrink-0 md:order-1">
+                  <RouterLink :to="`/product-details/${item._id}`" class="shrink-0 md:order-1">
                     <img :src="`${backendUrl}/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
                     <img :src="`${backendUrl}/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
-                  </a>
+                  </RouterLink>
 
                   <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                    <a :href="`/product-details/${item._id}`" class="text-base font-medium text-gray-900 hover:underline dark:text-white">{{ item.product_name }}</a>
+                    <RouterLink :to="`/product-details/${item._id}`" class="text-base font-medium text-gray-900 hover:underline dark:text-white">{{ item.product_name }}</RouterLink>
                   </div>
 
                   <div class="flex items-center justify-between md:order-3 md:justify-end">

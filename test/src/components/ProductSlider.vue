@@ -47,9 +47,9 @@
             <img class="p-4 rounded-t-lg object-cover" :src="`${backendUrl}/${product.image}`" alt="product image" />
           </a>
           <div class="px-5 pb-5">
-            <a class="block" :href="`/product-details/${product._id}`">
+            <RouterLink class="block" :to="`/product-details/${product._id}`">
               <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{{ product.product_name }}</h5>
-            </a>
+            </RouterLink>
             <div class="flex items-center justify-between mt-2">
               <span class="text-xl font-bold text-gray-900 dark:text-white">{{ product.p_price }} €</span>
               <button 

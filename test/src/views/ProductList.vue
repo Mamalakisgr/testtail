@@ -68,9 +68,9 @@
               <img class="object-cover object-center w-full h-full rounded-t-lg" :src="`${backendUrl}/${product.image}`" alt="product image" />
             </div>
             <div class="px-5 pb-5">
-              <a :href="`/product-details/${product._id}`">
+              <RouterLink :to="`/product-details/${product._id}`">
                 <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ product.product_name }}</h5>
-              </a>
+              </RouterLink>
               <div class="flex items-center justify-between mt-3">
                 <span class="text-3xl font-bold text-gray-900 dark:text-white">{{ product.p_price }} €</span>
                 <button @click="addToCart(product._id, 1)" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</button>
