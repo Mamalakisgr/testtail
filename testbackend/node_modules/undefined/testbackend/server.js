@@ -33,8 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // MongoDB Connection
 mongoose
   .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+
   })
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch((error) => console.log('Failed to connect to MongoDB:', error));
