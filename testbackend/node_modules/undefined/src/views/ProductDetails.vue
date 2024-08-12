@@ -99,6 +99,7 @@ const selectedSize = ref(sizes.value[0]);
 
 const fetchProduct = async () => {
   try {
+    console.log("backend url", backendUrl)
     const response = await axios.get(`${backendUrl}/api/products`, {
       params: {
         productId: productId
@@ -123,7 +124,7 @@ onMounted(() => {
 function storeRecentProduct(product) {
   // Validate the product data
   if (!product._id || !product.product_name || !product.image) {
-    
+
     console.error('Invalid product data', product);
     return;
   }
