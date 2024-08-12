@@ -40,7 +40,7 @@ export const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
-export const backendUrl = 'https://main--dapper-beijinho-216f7a.netlify.app';
+export const backendUrl = 'https://testtail-iota.vercel.app/';
 
 watch(() => (newVal) => {
   if (newVal) {
