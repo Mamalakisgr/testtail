@@ -10,9 +10,9 @@
               <li v-for="(item, index) in cartItems" :key="index" class="mb-2 flex items-center">
                 <img :src="`${backendUrl}/${item.image}`" alt="Product Image" class="w-10 h-10 object-cover mr-2">
                 <div class="flex-1">
-                  <a :href="`/product-details/${item.productId}`">
+                  <RouterLink :to="`/product-details/${item.productId}`">
                   <span>{{ item.name }}</span>
-                </a>
+                </RouterLink>
                   <span class="block text-sm text-gray-400">{{ item.quantity }} x</span>
                 </div>
                 <span>{{ (item.quantity * item.price).toFixed(2) }}</span>
