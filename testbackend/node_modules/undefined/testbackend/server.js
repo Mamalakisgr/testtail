@@ -13,6 +13,7 @@ const Category = require('./models/Category');
 const app = express();
 const PORT = 5174;
 const bcrypt = require('bcrypt');
+const MongoStore = require('connect-mongo');
 
 const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app'];
 
@@ -32,10 +33,13 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 60000, // Example: 1 minute
+    maxAge: 600000, // Set appropriate maxAge
     httpOnly: true,
-  }
+    sameSite: 'lax', // Helps mitigate CSRF attacks
+  },
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB Connection
