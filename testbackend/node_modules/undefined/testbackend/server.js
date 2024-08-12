@@ -37,7 +37,8 @@ app.use(session({
     httpOnly: true,
     sameSite: 'lax', // Helps mitigate CSRF attacks
   },
-  store: new MongoStore({ mongooseConnection: mongoose.connection })
+  store: new MongoStore({ mongooseConnection: mongoose
+    .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0') })
 }));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
