@@ -93,11 +93,6 @@ const router = createRouter({
       component: Register
     },
     {
-      path: '/product-details',
-      name: 'product-details',
-      component: ProductDetails
-    },
-    {
       path: '/wishlist',
       name: 'wishlist',
       component: Wishlist
