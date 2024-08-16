@@ -15,7 +15,7 @@ const PORT = 5174;
 const bcrypt = require('bcrypt');
 const MongoStore = require('connect-mongo');
 
-const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app', 'https://testtail-xs2f.vercel.app'];
+const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app', 'https://testtail-xs2f.vercel.app', 'http://localhost:3000'];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -35,7 +35,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     maxAge: 600000, // Set appropriate maxAge
-    httpOnly: true,
+    httpOnly: false,
     sameSite: 'lax', // Helps mitigate CSRF attacks
   },
   store: MongoStore.create({

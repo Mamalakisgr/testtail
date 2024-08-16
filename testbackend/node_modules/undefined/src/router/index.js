@@ -20,7 +20,7 @@ import { Carousel, Slide } from 'vue-carousel';
 import '../assets/main.css';
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   components: {
     Carousel,
     Slide
