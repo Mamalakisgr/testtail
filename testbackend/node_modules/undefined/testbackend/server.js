@@ -45,6 +45,13 @@ app.use(session({
   })
 }));
 
+// Serve static files from the "dist" directory
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// Catch-all route to handle Vue Router in history mode
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../dist/index.html'));
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB Connection
