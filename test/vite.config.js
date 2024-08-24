@@ -1,24 +1,29 @@
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-  ],
-  base: '/', // Ensures correct path resolution in production
+  plugins: [vue()],
+  base: '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
   server: {
-    port:5173,
+    port: 5173,
     proxy: {
       '/api': {
-        target: 'https://testtail-xs2f.vercel.app', // Your backend server URL
+        target: 'https://testtail-xs2f.vercel.app',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

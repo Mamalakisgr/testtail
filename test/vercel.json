@@ -6,6 +6,11 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/testbackend/server.js" },
     { 
+      "src": "/assets/(.*)\\.js",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/assets/$1.js"
+    },
+    { 
       "src": "/assets/(.*)", 
       "dest": "/assets/$1"
     },
