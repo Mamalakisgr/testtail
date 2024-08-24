@@ -5,20 +5,14 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/testbackend/server.js" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
+    { 
+      "src": "/assets/(.*)\\.js", 
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/dist/assets/$1.js"
+    },
+    { "src": "/assets/(.*)", "dest": "/dist/assets/$1" },
+    { "src": "/favicon.ico", "dest": "/dist/favicon.ico" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ],
-  "headers": [
-    {
-      "source": "/assets/(.*).js",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/javascript"
-        }
-      ]
-    }
+    { "src": "/(.*)", "dest": "/dist/index.html" }
   ]
 }
