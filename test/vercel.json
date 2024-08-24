@@ -5,14 +5,19 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/testbackend/server.js" },
-    { 
-      "src": "/assets/(.*)\\.js", 
-      "headers": { "Content-Type": "application/javascript" },
-      "dest": "/dist/assets/$1.js"
-    },
     { "src": "/assets/(.*)", "dest": "/dist/assets/$1" },
-    { "src": "/favicon.ico", "dest": "/dist/favicon.ico" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/dist/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*).js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
+      ]
+    }
   ]
 }
