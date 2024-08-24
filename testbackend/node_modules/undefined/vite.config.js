@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     vue(),
   ],
-  base: './', // Ensures correct path resolution in production
+  base: '/', // Ensures correct path resolution in production
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -18,7 +18,7 @@ export default defineConfig({
     port:5173,
     proxy: {
       '/api': {
-        target: 'https://localhost:5174', // Your backend server URL
+        target: 'https://testtail-xs2f.vercel.app', // Your backend server URL
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
