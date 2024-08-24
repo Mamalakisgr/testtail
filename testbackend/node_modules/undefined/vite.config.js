@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/',
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', 'https://testtail-xs2f.vercel.app'))
     }
   },
   build: {
