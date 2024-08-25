@@ -94,7 +94,8 @@
   import { ref, computed, onMounted,watch } from "vue";
   import axios from "axios";
   import AccountSideBar from "@/components/AccountSideBar.vue";
-  
+  import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+
   const orders = ref([]);
   const loading = ref(true);
   const openOrders = ref([]); // Track which orders are open
@@ -103,7 +104,7 @@
   
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("${backendUrl}/api/my-orders", {
+      const response = await axios.get(`${backendUrl}/api/my-orders`, {
         withCredentials: true,
       });
       orders.value = response.data;
