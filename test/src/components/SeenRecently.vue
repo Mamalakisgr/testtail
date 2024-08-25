@@ -9,7 +9,7 @@
         >
           <div class="relative w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <a class="w-full max-w-xs">
-            <img class="p-4 rounded-t-lg" :src="`${backendUrl}/${product.image}`" alt="product image" />
+            <img class="p-4 rounded-t-lg" :src="`${product.image}`" alt="product image" />
           </a>
           <div class="px-5 pb-5">
             <RouterLink class="w-full max-w-xs h-xs max-h-xs" :to="`/product-details/${product._id}`">

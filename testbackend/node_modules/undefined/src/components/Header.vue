@@ -46,7 +46,7 @@
         >
           <RouterLink :to="`/product-details/${product._id}`">
             <img
-              :src="`${backendUrl || 'localhost:5174'}/${product.image}`"
+              :src="`${backendUrl || 'localhost:5174'}/api/product-image/${product.p_images}`"
               alt="Product Image"
               class="w-10 h-10 object-cover mr-2"
             />
