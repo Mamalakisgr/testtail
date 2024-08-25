@@ -2,7 +2,8 @@
   <div id="app">
     <component :is="currentHeader" />
     <router-view />
-        <Notification message="Product has been added to cart" />
+    <Notification message="Product has been added to cart" duration="1000" />
+    <WishlistNotification message="Product has been added to wishlist" duration="1000"/>
 
   </div>
 </template>
@@ -16,7 +17,7 @@ import { ref, reactive, onMounted, onUnmounted, computed, watch, provide   } fro
 import eventBus from './js/eventBus';
 import axios from 'axios';
 import { backendUrl } from '@/js/index'; // Adjust the path if necessary
-
+import WishlistNotification from './components/WishlistNotification.vue';
 const auth = reactive({ loggedIn: false, userId: null });
 
 const route = useRoute();

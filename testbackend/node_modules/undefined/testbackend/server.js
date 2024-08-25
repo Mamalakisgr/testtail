@@ -911,9 +911,131 @@ app.put('/api/order/:orderId', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (req.session.userId) {
+    return next();
+  }
+  res.status(401).json({ message: 'User not authenticated' });
+};
+//Addresses
+app.post('/api/user/shipping-address', isAuthenticated, async (req, res) => {
+  const { addressId, addressData } = req.body;
+
+  try {
+    const user = await User.findById(req.session.userId);
+
+    if (addressId) {
+      // Update existing address
+      const addressIndex = user.shippingAddresses.findIndex(addr => addr._id.toString() === addressId);
+      if (addressIndex > -1) {
+        user.shippingAddresses[addressIndex] = addressData;
+      }
+    } else {
+      // Add new address
+      user.shippingAddresses.push(addressData);
+    }
+
+    await user.save();
+    res.status(200).json({ message: 'Shipping address saved successfully', shippingAddresses: user.shippingAddresses });
+  } catch (error) {
+    console.error('Error saving shipping address:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.post('/api/user/billing-address', isAuthenticated, async (req, res) => {
+  const { addressId, addressData } = req.body;
+
+  try {
+    const user = await User.findById(req.session.userId);
+
+    if (addressId) {
+      // Update existing address
+      const addressIndex = user.billingAddresses.findIndex(addr => addr._id.toString() === addressId);
+      if (addressIndex > -1) {
+        user.billingAddresses[addressIndex] = addressData;
+      }
+    } else {
+      // Add new address
+      user.billingAddresses.push(addressData);
+    }
+
+    await user.save();
+    res.status(200).json({ message: 'Billing address saved successfully', billingAddresses: user.billingAddresses });
+  } catch (error) {
+    console.error('Error saving billing address:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.delete('/api/user/shipping-address/:id', isAuthenticated, async (req, res) => {
+  const addressId = req.params.id;
+
+  try {
+    const user = await User.findById(req.session.userId);
+    user.shippingAddresses = user.shippingAddresses.filter(addr => addr._id.toString() !== addressId);
+
+    await user.save();
+    res.status(200).json({ message: 'Shipping address deleted successfully', shippingAddresses: user.shippingAddresses });
+  } catch (error) {
+    console.error('Error deleting shipping address:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
+app.delete('/api/user/billing-address/:id', isAuthenticated, async (req, res) => {
+  const addressId = req.params.id;
 
+  try {
+    const user = await User.findById(req.session.userId);
+    user.billingAddresses = user.billingAddresses.filter(addr => addr._id.toString() !== addressId);
+
+    await user.save();
+    res.status(200).json({ message: 'Billing address deleted successfully', billingAddresses: user.billingAddresses });
+  } catch (error) {
+    console.error('Error deleting billing address:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+app.get('/api/user/shipping-address', async (req, res) => {
+  try {
+      const userId = req.session.userId; // Assuming you're using session to track the user
+      if (!userId) {
+          return res.status(401).json({ message: 'User not authenticated' });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json(user.shippingAddresses);
+  } catch (error) {
+      console.error('Error fetching shipping addresses:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.get('/api/user/billing-address', async (req, res) => {
+  try {
+      const userId = req.session.userId; // Assuming you're using session to track the user
+      if (!userId) {
+          return res.status(401).json({ message: 'User not authenticated' });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json(user.billingAddresses);
+  } catch (error) {
+      console.error('Error fetching billing addresses:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
 // Endpoint to get order details by ID
 app.get('/api/order/:orderId', async (req, res) => {
   try {

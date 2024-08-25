@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+import eventBus from '../js/eventBus';
 
 export const wishlist = ref([]);
 
@@ -31,6 +32,8 @@ export const toggleWishlist = async (productId) => {
         { withCredentials: true }
       );
       wishlist.value.push(productId);
+      eventBus.emit('wishlist-added');
+
     }
   } catch (error) {
     console.error('Error updating wishlist:', error);

@@ -16,6 +16,9 @@ import AccountPage from '../views/AccountPage.vue'
 import CreditCardPayment from '../views/CreditCardPayment.vue'
 import Wishlist from '../views/Wishlist.vue'
 import MyOrders from '@/views/MyOrders.vue'
+import ShippingAddress from '@/views/MyShipping.vue';
+import BillingAddress from '@/views/MyBilling.vue';
+
 import { Carousel, Slide } from 'vue-carousel';
 import '../assets/main.css';
 
@@ -41,6 +44,16 @@ const router = createRouter({
       name: 'AccountPage',
       component: AccountPage,
       
+    },
+    {
+      path: '/my-account/shipping-address',
+      name: 'ShippingAddress',
+      component: ShippingAddress,
+    },
+    {
+      path: '/my-account/billing-address',
+      name: 'BillingAddress',
+      component: BillingAddress,
     },
     {
       path: '/about',
