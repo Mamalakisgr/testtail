@@ -542,7 +542,7 @@ app.post('/api/add-to-cart', async (req, res) => {
           productId,
           name: product.product_name,
           price: product.p_price,
-          image: product.image,
+          image:product.p_images,
           quantity
         });
       }
@@ -566,7 +566,7 @@ app.post('/api/add-to-cart', async (req, res) => {
           productId,
           name: product.name,
           price: product.price,
-          image: product.image,
+          image:`/api/product-image/${product.p_images}`,
           quantity
         });
       }
@@ -603,7 +603,7 @@ app.get('/api/cart-items', async (req, res) => {
           cartItems.push({
             productId: product._id,
             name: product.product_name,
-            image: product.image,
+            image: product.p_images,
             price: product.p_price,
             quantity: item.quantity
           });
@@ -737,19 +737,29 @@ app.get('/api/wishlist-count', async (req, res) => {
 });
 
 app.get('/api/wishlist-items', async (req, res) => {
-  if (req.session.userId) {
-    try {
+  try {
+    if (req.session.userId) {
+      console.log(`Fetching wishlist for user ID: ${req.session.userId}`);
+
       const user = await User.findById(req.session.userId).populate('wishlist.productId');
-      const wishlistProductIds = user.wishlist.map(item => item.productId._id.toString());
+      if (!user) {
+        console.log('User not found');
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Filter out null or undefined productIds
+      const validWishlistItems = user.wishlist.filter(item => item.productId !== null);
+
+      const wishlistProductIds = validWishlistItems.map(item => item.productId._id.toString());
       res.json(wishlistProductIds);
-    } catch (error) {
-      console.error('Error fetching wishlist items:', error);
-      res.status(500).send('Server error');
+    } else {
+      console.log('No user ID found in session, handling as guest');
+      const wishlistProductIds = req.session.wishlist || [];
+      res.json(wishlistProductIds);
     }
-  } else {
-    // Return wishlist for guests
-    const wishlistProductIds = req.session.wishlist || [];
-    res.json(wishlistProductIds);
+  } catch (error) {
+    console.error('Error fetching wishlist items:', error);
+    res.status(500).send('Server error');
   }
 });
 

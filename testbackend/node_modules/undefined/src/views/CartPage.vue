@@ -18,8 +18,8 @@
             >
               <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                 <a href="#" class="shrink-0 md:order-1">
-                  <img :src="`${backendUrl}/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
-                  <img :src="`${backendUrl}/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
+                  <img :src="`${backendUrl}/api/product-image/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
+                  <img :src="`${backendUrl}/api/product-image/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
                 </a>
 
                 <label for="counter-input" class="sr-only">Choose quantity:</label>

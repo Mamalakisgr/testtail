@@ -24,8 +24,8 @@
               >
                 <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                   <RouterLink :to="`/product-details/${item._id}`" class="shrink-0 md:order-1">
-                    <img :src="`${backendUrl}/${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
-                    <img :src="`${backendUrl}/${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
+                    <img :src="`${item.image}`" alt="product image" class="h-20 w-20 dark:hidden" />
+                    <img :src="`${item.image}`" alt="product image" class="hidden h-20 w-20 dark:block" />
                   </RouterLink>
 
                   <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
@@ -109,7 +109,15 @@ const loadWishlistItems = async () => {
   loading.value = true;
   await fetchWishlist();
   const productDetails = await fetchProductDetails(wishlist.value);
-  wishlistItems.value = productDetails;
+
+  // Map the product details to include the correct image URL
+  wishlistItems.value = productDetails.map(product => {
+    return {
+      ...product,
+      image: product.p_images ? `${backendUrl}/api/product-image/${product.p_images}` : '/path/to/fallback-image.jpg',
+    };
+  });
+
   loading.value = false;
 };
 

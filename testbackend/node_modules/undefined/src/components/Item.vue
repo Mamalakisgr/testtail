@@ -2,7 +2,7 @@
   <div class="grid grid-cols-1 md:grid-cols-8 gap-4 mb-5 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
     <div class="md:col-span-2 flex justify-center items-center">
       <a  class="shrink-0">
-        <img :src="`${backendUrl}/${item.image}`" alt="product image" class="h-20 w-20 object-cover rounded-lg" />
+        <img :src="`${backendUrl}/api/product-image/${item.image}`" alt="product image" class="h-20 w-20 object-cover rounded-lg" />
       </a>
     </div>
     <div class="md:col-span-3 space-y-2">

@@ -8,7 +8,7 @@
           <div v-if="cartItems.length">
             <ul>
               <li v-for="(item, index) in cartItems" :key="index" class="mb-2 flex items-center">
-                <img :src="`${backendUrl}/${item.image}`" alt="Product Image" class="w-10 h-10 object-cover mr-2">
+                <img :src="item.image"  alt="Product Image" class="w-10 h-10 object-cover mr-2">
                 <div class="flex-1">
                   <RouterLink :to="`/product-details/${item.productId}`">
                   <span>{{ item.name }}</span>
@@ -51,11 +51,16 @@ const cartItems = ref([]);
 const fetchCartItems = async () => {
   try {
     const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
-    cartItems.value = response.data.items;
+    cartItems.value = response.data.items.map(item => {
+      // Construct the image URL or provide a fallback
+      item.image =  `${backendUrl}/api/product-image/${item.image}`;
+      return item;
+    });
   } catch (error) {
     console.error('Failed to fetch cart items', error);
   }
 };
+
 
 const removeFromCart = async (productId) => {
   if (!productId) {
