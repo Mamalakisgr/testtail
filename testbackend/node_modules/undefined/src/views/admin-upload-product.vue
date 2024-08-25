@@ -180,6 +180,7 @@ const uploadProduct = async () => {
   formData.append('p_quantity', product.value.quantity);
   formData.append('offer_price', product.value.offerPrice);
   formData.append('productImage', product.value.image);
+  console.log(...formData); // Debugging line to check the FormData content
 
   try {
     const response = await axios.post(`${backendUrl}/api/upload-product`, formData, {

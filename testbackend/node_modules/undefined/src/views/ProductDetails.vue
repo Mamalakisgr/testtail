@@ -3,8 +3,9 @@
     <div class="container px-5 py-24 mx-auto ">
       <Breadcrumb :category="product.p_category" :product="product.product_name" />
       <div class="lg:w-4/5 mx-auto flex flex-wrap rounded dark:bg-gray-900 p-2">
-        <img :alt="product.product_name" class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200 h-full max-w-sm max-h-96 " :src="`${backendUrl}/${product.image}`" />
-        <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0 ">
+        <img :alt="product.product_name" 
+     class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200 h-full max-w-sm max-h-96" 
+     :src="product.image" />        <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0 ">
           <h2 class="text-sm title-font  tracking-widest">{{ product.p_brand }}</h2>
           <h1 class=" text-3xl title-font font-medium mb-1">{{ product.product_name }}</h1>
           <div class="flex mb-4">
@@ -99,17 +100,25 @@ const selectedSize = ref(sizes.value[0]);
 
 const fetchProduct = async () => {
   try {
-    console.log("backend url", backendUrl)
     const response = await axios.get(`${backendUrl}/api/products`, {
       params: {
         productId: productId
       }
     });
-    
-    // Ensure product data is not empty
+
     if (response.data && response.data.length > 0) {
-      product.value = response.data[0];
-      storeRecentProduct(product.value);  // Store the product after it's fetched
+      const fetchedProduct = response.data[0];
+      
+      // Check if p_images is defined
+      if (fetchedProduct.p_images) {
+        fetchedProduct.image = `http://localhost:5174/api/product-image/${fetchedProduct.p_images}`;
+      } else {
+        console.error('p_images field is undefined for the product');
+      }
+
+      product.value = fetchedProduct;
+
+      storeRecentProduct(product.value);
     } else {
       console.error('Product data is empty');
     }
@@ -117,14 +126,15 @@ const fetchProduct = async () => {
     console.error('Failed to fetch product', error);
   }
 };
+
+
 onMounted(() => {
   fetchWishlist();
-  storeRecentProduct(product.value);
+  // storeRecentProduct(product.value);
 });
 function storeRecentProduct(product) {
   // Validate the product data
   if (!product._id || !product.product_name || !product.image) {
-
     console.error('Invalid product data', product);
     return;
   }
@@ -151,6 +161,7 @@ function storeRecentProduct(product) {
   // Save the updated list back to localStorage
   localStorage.setItem('recentProducts', JSON.stringify(recentProducts));
 }
+
 
 
 onMounted(fetchProduct);

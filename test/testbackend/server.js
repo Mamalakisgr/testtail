@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { GridFsStorage } = require('multer-gridfs-storage');
+
 const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
@@ -14,6 +16,9 @@ const app = express();
 const PORT = 5174;
 const bcrypt = require('bcrypt');
 const MongoStore = require('connect-mongo');
+const Grid = require('gridfs-stream');
+const { GridFSBucket } = require('mongodb');
+const { Readable } = require('stream');
 
 const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app', 'https://testtail-xs2f.vercel.app', 'http://localhost:3000'];
 
@@ -51,27 +56,35 @@ app.use(express.static(path.join(__dirname, '../dist')));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// MongoDB Connection
-mongoose
-  .connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
 
-  })
-  .then(() => console.log('Successfully connected to MongoDB'))
-  .catch((error) => console.log('Failed to connect to MongoDB:', error));
 
-// // Set up storage engine
-// const storage = multer.diskStorage({
-//   destination: './uploads/',
-//   filename: function (req, file, cb) {
-//     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-//   }
-// });
+let gfs;
 
-// // Initialize upload
-// const upload = multer({
-//   storage: multer.memoryStorage(),
-//   limits: { fileSize: 1000000 }, // 1MB file size limit
-// }).single('productImage');
+mongoose.connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('MongoDB connected');
+  gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: 'uploads'
+  });
+})
+.catch(err => console.log('MongoDB connection error:', err));
+// Initialize GridFSBucket
+let gfsBucket;
+
+mongoose.connection.once('open', () => {
+  gfsBucket = new GridFSBucket(mongoose.connection.db, {
+    bucketName: 'uploads',
+  });
+});
+
+// Multer storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+
 
 
 // Check file type
@@ -260,37 +273,52 @@ app.post('/api/upload-category', async (req, res) => {
       res.status(500).send('Server error');
   }
 });// Route to upload product
-app.post('/api/upload-product', (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return res.status(400).json({ message: err });
-    }
+// Route to upload product
+app.post('/api/upload-product', upload.single('productImage'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
 
+  try {
     const { name, price, p_category, p_tag, p_brand, p_quantity, offer_price } = req.body;
-    const productImage = req.file ? req.file.path : ''; // Handle the case where no file is uploaded
 
-    // Process tags: Split, map "-" to null, and filter out empty tags
-    const processedTags = p_tag.split(',').map(tag => tag.trim() === '-' ? null : tag.trim()).filter(tag => tag);
+    const readableStream = new Readable();
+    readableStream.push(req.file.buffer);
+    readableStream.push(null);
 
-    try {
-      const newProduct = new Product({
-        product_name: name,
-        p_price: price,
-        p_category: p_category,
-        p_tag: processedTags, // Use the processed tags array
-        p_brand: p_brand,
-        p_quantity: p_quantity,
-        offer_price: offer_price,
-        image: productImage
+    const uploadStream = gfsBucket.openUploadStream(req.file.originalname, {
+      contentType: req.file.mimetype,
+    });
+
+    readableStream.pipe(uploadStream)
+      .on('error', (err) => {
+        console.error('Failed to upload file:', err);
+        res.status(500).send('Failed to upload file');
+      })
+      .on('finish', async () => {
+        const imageId = uploadStream.id.toString(); // Convert ObjectId to string
+
+        const processedTags = p_tag.split(',').map(tag => tag.trim() === '-' ? null : tag.trim()).filter(tag => tag);
+
+        const newProduct = new Product({
+          product_name: name,
+          p_price: price,
+          p_category: p_category,
+          p_tag: processedTags,
+          p_brand: p_brand,
+          p_quantity: p_quantity,
+          offer_price: offer_price,
+          p_images: imageId, // Store the GridFS file ID as a string
+        });
+
+        await newProduct.save();
+        res.status(201).send('Product uploaded successfully');
       });
 
-      await newProduct.save(); // Save the new product to the database
-      res.status(201).send('Product uploaded successfully');
-    } catch (error) {
-      console.error('Failed to upload product:', error);
-      res.status(500).send('Server error');
-    }
-  });
+  } catch (error) {
+    console.error('Failed to upload product:', error);
+    res.status(500).send('Server error');
+  }
 });
 
 
@@ -473,6 +501,7 @@ app.get('/api/cart-count', async (req, res) => {
   }
 });
 
+// Define a new upload middleware for handling image updates
 // Define a new upload middleware for handling image updates
 const uploadUpdate = multer({
   storage: multer.memoryStorage(), // Use memory storage instead
@@ -658,6 +687,33 @@ app.post('/api/product-details', async (req, res) => {
     res.status(500).send('Unable to fetch product details');
   }
 });
+app.get('/api/product-image/:id', async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ err: 'Invalid ID format' });
+  }
+
+  try {
+    const _id = new mongoose.Types.ObjectId(id);
+    const files = await gfs.find({ _id }).toArray();
+    if (!files || files.length === 0) {
+      return res.status(404).json({ err: 'No file exists' });
+    }
+
+    const file = files[0];
+    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+      const readStream = gfs.openDownloadStream(_id);
+      readStream.pipe(res);
+    } else {
+      res.status(404).json({ err: 'Not an image' });
+    }
+  } catch (error) {
+    console.error('Error finding file:', error);
+    res.status(500).json({ err: 'Server error' });
+  }
+});
+
 
 app.get('/api/wishlist-count', async (req, res) => {
   if (req.session && req.session.userId) {

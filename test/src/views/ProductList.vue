@@ -65,7 +65,7 @@
         <div class="flex flex-wrap gap-6">
           <div v-for="product in paginatedProducts" :key="product._id" class="relative group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <div class="fixed-dimensions">
-              <img class="object-cover object-center w-full h-full rounded-t-lg" :src="`${backendUrl}/${product.image}`" alt="product image" />
+              <img class="object-cover object-center w-full h-full rounded-t-lg" :src="`${product.image}`" alt="product image" />
             </div>
             <div class="px-5 pb-5">
               <RouterLink :to="`/product-details/${product._id}`">
@@ -147,11 +147,16 @@ const itemsPerPage = ref(10);
 const fetchProducts = async (categoryId) => {
   try {
     const response = await axios.get(`${backendUrl}/api/products`, { params: { category: categoryId } });
-    products.value = response.data;
+    products.value = response.data.map(product => {
+      // Construct the image URL or provide a fallback
+      product.image = product.p_images ? `${backendUrl}/api/product-image/${product.p_images}` : '/path/to/fallback-image.jpg';
+      return product;
+    });
   } catch (error) {
     console.error('Failed to fetch products', error);
   }
 };
+
 
 const fetchCategories = async () => {
   try {

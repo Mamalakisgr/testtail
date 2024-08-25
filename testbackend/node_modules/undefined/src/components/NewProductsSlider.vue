@@ -40,7 +40,7 @@
             </svg>
           </button>
           <a class="w-full max-w-xs">
-            <img class="p-4 rounded-t-lg" :src="`${backendUrl}/${product.image}`" alt="product image" />
+            <img class="p-4 rounded-t-lg" :src="`${product.image}`" alt="product image" />
           </a>
           <div class="px-5 pb-5">
             <RouterLink class="w-full max-w-xs h-xs max-h-xs" :to="`/product-details/${product._id}`">
@@ -75,7 +75,11 @@ const fetchProducts = async () => {
     const response = await axios.get(`${backendUrl}/api/products`, {
       params: { tag: 'new' }
     });
-    products.value = response.data;
+    products.value = response.data.map(product => {
+      // Construct the image URL or provide a fallback
+      product.image = product.p_images ? `${backendUrl}/api/product-image/${product.p_images}` : '/path/to/fallback-image.jpg';
+      return product;
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
   }
