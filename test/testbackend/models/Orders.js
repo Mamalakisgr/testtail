@@ -21,7 +21,7 @@ const OrderSchema = new mongoose.Schema({
   paymentMethod: { type: String, required: true },
   deliveryMethod: { type: String, required: true },
   status: { type: String, required: false, default: 'pending' },
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
   items: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },

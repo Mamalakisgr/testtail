@@ -134,23 +134,33 @@ app.get('/api/my-orders', async (req, res) => {
 });
 
 app.delete('/api/clear-cart', async (req, res) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ message: 'User not authenticated' });
-  }
+  if (req.session && req.session.userId) {
+    // Authenticated user
+    try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
 
-  try {
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      user.cart = []; // Clear the cart items
+      await user.save();
+
+      res.json({ message: 'Cart cleared successfully for authenticated user' });
+    } catch (error) {
+      console.error('Error clearing cart for authenticated user:', error);
+      res.status(500).json({ message: 'Server error' });
     }
-
-    user.cart = []; // Clear the cart items
-    await user.save();
-
-    res.json({ message: 'Cart cleared successfully' });
-  } catch (error) {
-    console.error('Error clearing cart:', error);
-    res.status(500).json({ message: 'Server error' });
+  } else {
+    // Guest user
+    try {
+      if (req.session.cart) {
+        req.session.cart = []; // Clear the cart items in the session
+      }
+      res.json({ message: 'Cart cleared successfully for guest user' });
+    } catch (error) {
+      console.error('Error clearing cart for guest user:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
   }
 });
 
@@ -825,23 +835,21 @@ app.post('/api/remove-from-wishlist', async (req, res) => {
     res.json({ message: 'Product removed from wishlist', count: req.session.wishlist.length });
   }
 });
-// Route to handle order creation
 app.post('/api/create-order', async (req, res) => {
-  const {
-    formData,
-    items,
-  } = req.body;
+  const { formData, items } = req.body;
 
-  if (!req.session.userId) {
-    return res.status(401).json({ message: 'User not authenticated' });
-  }
+  // Check if the user is authenticated or a guest
+  const isAuthenticated = req.session && req.session.userId;
+  let user = null;
 
-  try {
-    const user = await User.findById(req.session.userId);
+  if (isAuthenticated) {
+    user = await User.findById(req.session.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+  }
 
+  try {
     const order = new Order({
       order_id: new mongoose.Types.ObjectId().toString(), // generate a unique ID
       firstName: formData.firstName,
@@ -861,14 +869,15 @@ app.post('/api/create-order', async (req, res) => {
       billingCity: formData.billingCity,
       billingZip: formData.billingZip,
       billingCountry: formData.billingCountry,
-      customerId: user._id,
+      customerId: isAuthenticated ? user._id : null, // Only store user ID if authenticated
       items: items.map(item => ({
         productId: item.productId,
         name: item.name,
         price: item.price,
-        quantity: item.quantity
+        quantity: item.quantity,
       })),
       status: 'pending',  // Set the default status to 'pending'
+      isGuest: !isAuthenticated,  // Flag to indicate if the order is placed by a guest
     });
 
     await order.save();
@@ -879,6 +888,7 @@ app.post('/api/create-order', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 app.put('/api/order/:orderId', async (req, res) => {
   const { orderId } = req.params;

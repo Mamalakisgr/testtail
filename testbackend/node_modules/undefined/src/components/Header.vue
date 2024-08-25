@@ -110,7 +110,8 @@
   <transition name="slide">
     <div v-if="isMenuOpen" id="mobile-menu" class="fixed inset-0 flex z-10" style="z-index: 99">
       <div class="bg-gray-900 bg-opacity-50 w-full" @click="toggleMenu"></div>
-      <aside class="w-64 bg-gray-800 text-white z-20 fixed left-0 h-full">
+      <aside class="w-64 bg-gray-800 text-white z-20 fixed left-0 h-full overflow-y-auto">
+        <!-- Mobile Menu Content -->
         <fwb-sidebar>
           <div class="flex-shrink-0 flex items-center justify-center p-[2px] space-x-4">
             <img class="h-12 w-12 rounded-full border-2 border-white shadow-lg" src="/8218.png_860.png"
