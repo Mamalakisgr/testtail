@@ -1,7 +1,15 @@
 <template>
   <div>
     <h1 class="text-2xl mb-5 p-4 font-bold text-center bg-gray-800 text-white dark:bg-gray-1000">Just Arrived!</h1>
+    
+    <!-- Loading spinner -->
+    <div v-if="loading" class="flex justify-center items-center h-64">
+      <div class="loader"></div>
+    </div>
+    
+    <!-- Carousel -->
     <Carousel
+      v-else
       :items-to-show="itemsToShow"
       :wrap-around="true"
       class="w-full bg-gray-200 rounded-lg"
@@ -63,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted,onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Carousel, Slide } from 'vue3-carousel';
 import axios from 'axios';
 import 'vue3-carousel/dist/carousel.css';
@@ -73,7 +81,7 @@ import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';  // 
 import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const products = ref([]);
-
+const loading = ref(true);  // Loading state
 const itemsToShow = ref(4);  // Default value for larger screens
 
 const updateItemsToShow = () => {
@@ -101,6 +109,8 @@ const fetchProducts = async () => {
     });
   } catch (error) {
     console.error('Error fetching products:', error);
+  } finally {
+    loading.value = false;  // Set loading to false once data is fetched
   }
 };
 
@@ -125,5 +135,24 @@ onUnmounted(() => {
 img {
   height: 300px;
   width: 400px;
+}
+
+/* Loading spinner styles */
+.loader {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

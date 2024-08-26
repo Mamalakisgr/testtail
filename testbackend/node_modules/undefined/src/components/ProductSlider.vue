@@ -1,7 +1,15 @@
 <template>
   <div>
     <h1 class="text-2xl p-4 font-bold text-center bg-white border border-colour-white">Products with Offers!</h1>
+    
+    <!-- Loading spinner -->
+    <div v-if="loading" class="flex justify-center items-center h-64">
+      <div class="loader"></div>
+    </div>
+
+    <!-- Carousel -->
     <Carousel 
+      v-else
       :items-to-show="itemsToShow" 
       :wrap-around="true" 
       class="bg-gray-200"
@@ -75,8 +83,8 @@ import 'vue3-carousel/dist/carousel.css';
 import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';  // Adjust the import path accordingly
 import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
-// const cartCount = ref(0);
 const products = ref([]);
+const loading = ref(true);  // Loading state
 const itemsToShow = ref(3); // Default to 3 items
 
 // Adjust itemsToShow based on screen width
@@ -89,6 +97,7 @@ const updateItemsToShow = () => {
     itemsToShow.value = 3;
   }
 };
+
 const fetchProductsOffer = async () => {
   try {
     const response = await axios.get(`${backendUrl}/api/products`, {
@@ -98,19 +107,19 @@ const fetchProductsOffer = async () => {
       // Construct the image URL or provide a fallback
       product.image = product.p_images ? `${backendUrl}/api/product-image/${product.p_images}` : '/path/to/fallback-image.jpg';
       return product;
-    });  } catch (error) {
+    });
+  } catch (error) {
     console.error('Error fetching products:', error);
+  } finally {
+    loading.value = false;  // Set loading to false once data is fetched
   }
 };
-
-
 
 onMounted(() => {
   fetchProductsOffer();
   fetchWishlist();
   updateItemsToShow();
   window.addEventListener('resize', updateItemsToShow);
-
 });
 
 onUnmounted(() => {
@@ -140,5 +149,24 @@ img {
   width: 100%;
   object-fit: cover;
 }
+}
+
+/* Loading spinner styles */
+.loader {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

@@ -4,7 +4,12 @@
     <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Shopping Cart</h2>
 
-      <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
+      <!-- Loading spinner -->
+      <div v-if="loading" class="flex justify-center items-center h-64">
+        <div class="loader"></div>
+      </div>
+
+      <div v-else class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
         <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
           <div class="space-y-6">
             <div v-if="cartItems.length === 0" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6 text-center text-gray-900 dark:text-white">
@@ -160,11 +165,10 @@
               </dl>
             </div>
 
-             <RouterLink to="/checkout"
+            <RouterLink to="/checkout"
               class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             > Proceed to Checkout
-             </RouterLink>
-            
+            </RouterLink>
 
             <div class="flex items-center justify-center gap-2">
               <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
@@ -220,6 +224,7 @@ import axios from 'axios';
 import eventBus from '../js/eventBus';
 import Footer from '../components/Footer.vue';
 const cartItems = ref([]);
+const loading = ref(true); // Loading state
 import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 const fetchCartItems = async () => {
@@ -228,6 +233,8 @@ const fetchCartItems = async () => {
     cartItems.value = response.data.items;
   } catch (error) {
     console.error('Failed to fetch cart items', error);
+  } finally {
+    loading.value = false;  // Set loading to false once data is fetched
   }
 };
 
@@ -288,5 +295,22 @@ onMounted(()=>{
 </script>
 
 <style scoped>
-/* Add any additional styling you need here */
+/* Loading spinner styles */
+.loader {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
