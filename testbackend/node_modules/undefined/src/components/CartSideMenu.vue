@@ -5,29 +5,38 @@
       <aside class="w-64 bg-gray-800 text-white z-20 fixed right-0 h-full">
         <div class="p-4">
           <h2 class="text-xl font-bold mb-4">Cart Items</h2>
-          <div v-if="cartItems.length">
-            <ul>
-              <li v-for="(item, index) in cartItems" :key="index" class="mb-2 flex items-center">
-                <img :src="item.image"  alt="Product Image" class="w-10 h-10 object-cover mr-2">
-                <div class="flex-1">
-                  <RouterLink :to="`/product-details/${item.productId}`">
-                  <span>{{ item.name }}</span>
-                </RouterLink>
-                  <span class="block text-sm text-gray-400">{{ item.quantity }} x</span>
-                </div>
-                <span>{{ (item.quantity * item.price).toFixed(2) }}</span>
-                <button @click="removeFromCart(item.productId )" class="ml-2 text-red-500 hover:text-red-700">X</button>
-              </li>
-            </ul>
-            <RouterLink to="/cart" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
-              Cart Page
-            </RouterLink>
-            <RouterLink to="/checkout" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
-              Checkout
-            </RouterLink>
+          
+          <!-- Loading spinner -->
+          <div v-if="loading" class="flex justify-center items-center h-64">
+            <div class="loader"></div>
           </div>
+
+          <!-- Cart Items -->
           <div v-else>
-            <p>Your cart is empty.</p>
+            <div v-if="cartItems.length">
+              <ul>
+                <li v-for="(item, index) in cartItems" :key="index" class="mb-2 flex items-center">
+                  <img :src="item.image" alt="Product Image" class="w-10 h-10 object-cover mr-2">
+                  <div class="flex-1">
+                    <RouterLink :to="`/product-details/${item.productId}`">
+                      <span>{{ item.name }}</span>
+                    </RouterLink>
+                    <span class="block text-sm text-gray-400">{{ item.quantity }} x</span>
+                  </div>
+                  <span>{{ (item.quantity * item.price).toFixed(2) }}</span>
+                  <button @click="removeFromCart(item.productId)" class="ml-2 text-red-500 hover:text-red-700">X</button>
+                </li>
+              </ul>
+              <RouterLink to="/cart" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
+                Cart Page
+              </RouterLink>
+              <RouterLink to="/checkout" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
+                Checkout
+              </RouterLink>
+            </div>
+            <div v-else>
+              <p>Your cart is empty.</p>
+            </div>
           </div>
         </div>
       </aside>
@@ -47,8 +56,10 @@ const props = defineProps({
 });
 
 const cartItems = ref([]);
+const loading = ref(true); // Loading state
 
 const fetchCartItems = async () => {
+  loading.value = true;
   try {
     const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
     cartItems.value = response.data.items.map(item => {
@@ -58,9 +69,10 @@ const fetchCartItems = async () => {
     });
   } catch (error) {
     console.error('Failed to fetch cart items', error);
+  } finally {
+    loading.value = false; // Set loading to false once data is fetched
   }
 };
-
 
 const removeFromCart = async (productId) => {
   if (!productId) {
@@ -95,5 +107,24 @@ watch(() => props.isCartOpen, (newVal) => {
 }
 .slide-enter-from, .slide-leave-to {
   transform: translateX(100%);
+}
+
+/* Loading spinner styles */
+.loader {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
