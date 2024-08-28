@@ -111,7 +111,7 @@ const fetchProduct = async () => {
       
       // Check if p_images is defined
       if (fetchedProduct.p_images) {
-        fetchedProduct.image = `http://localhost:5174/api/product-image/${fetchedProduct.p_images}`;
+        fetchedProduct.image = `{backendUrl}/api/product-image/${fetchedProduct.p_images}`;
       } else {
         console.error('p_images field is undefined for the product');
       }
