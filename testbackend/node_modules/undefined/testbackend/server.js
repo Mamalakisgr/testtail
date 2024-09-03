@@ -61,8 +61,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 let gfs;
 
 mongoose.connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+
 })
 .then(() => {
   console.log('MongoDB connected');
