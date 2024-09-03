@@ -338,6 +338,7 @@ onMounted(() => {
 
 watch(() => router.currentRoute.value.path, () => {
   isCartOpen.value = false;  // Close the cart when the route changes
+  closeSearchResults();
 });
 
 const wishlistCount = computed(() => wishlist.value.length);

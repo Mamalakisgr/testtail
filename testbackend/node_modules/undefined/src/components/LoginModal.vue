@@ -1,31 +1,48 @@
 <template>
   <transition name="fade">
     <div v-if="isVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <header class="text-xl font-bold mb-4 text-center">Login</header>
-        <form @submit.prevent="loginUser">
-          <div class="mb-4">
-            <input
-              type="email"
-              v-model="loginData.email"
-              placeholder="Email"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-            />
+      <div class="relative bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-screen-xl">
+        <div class="py-8 px-4 grid lg:grid-cols-2 gap-8 lg:gap-16">
+          <div class="flex flex-col justify-center">
+            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">We invest in the world’s potential</h1>
+            <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
+            <a href="#" class="text-blue-600 dark:text-blue-500 hover:underline font-medium text-lg inline-flex items-center">Read more about our app 
+                <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+            </a>
           </div>
-          <div class="mb-4">
-            <input
-              type="password"
-              v-model="loginData.password"
-              placeholder="Password"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-            />
+          <div>
+            <div class="w-full lg:max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow-xl dark:bg-gray-800">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                  Sign in to Flowbite
+              </h2>
+              <form @submit.prevent="loginUser" class="mt-8 space-y-6">
+                  <div>
+                      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                      <input type="email" v-model="loginData.email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required />
+                  </div>
+                  <div>
+                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
+                      <input type="password" v-model="loginData.password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                  </div>
+                  <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                          <input id="remember" v-model="loginData.remember" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" />
+                      </div>
+                      <div class="ms-3 text-sm">
+                      <label for="remember" class="font-medium text-gray-500 dark:text-gray-400">Remember this device</label>
+                      </div>
+                      <a href="#" class="ms-auto text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Lost Password?</a>
+                  </div>
+                  <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
+                  <div class="text-sm font-medium text-gray-900 dark:text-white">
+                      Not registered yet? <a href="/register" class="text-blue-600 hover:underline dark:text-blue-500">Create account</a>
+                  </div>
+              </form>
+            </div>
           </div>
-          <div class="mb-4">
-            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded">Login</button>
-          </div>
-        </form>
+        </div>
         <button @click="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 focus:outline-none">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -35,7 +52,6 @@
     </div>
   </transition>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';

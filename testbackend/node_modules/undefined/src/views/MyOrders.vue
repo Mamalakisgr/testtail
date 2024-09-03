@@ -1,61 +1,75 @@
 <template>
-    <div class="flex min-h-screen bg-gray-100 dark:bg-gray-800">
-      <!-- Include the AccountSidebar component -->
-      <AccountSideBar class="w-64"></AccountSideBar>
-  
-      <!-- Main Content Area -->
-      <div class="flex-1 p-6 bg-white dark:bg-gray-600 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">My Orders</h1>
-  
-        <!-- Filter Section -->
-        <div class="flex justify-between items-center mb-6">
-          <label class="text-gray-700 dark:text-gray-300">Orders per page:</label>
-          <select
-            v-model="ordersPerPage"
-            @change="updateOrdersPerPage"
-            class="ml-2 p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-          </select>
-        </div>
-  
-        <div v-if="loading" class="text-gray-700 dark:text-gray-300">Loading orders...</div>
-        <div v-else-if="orders.length === 0" class="text-gray-700 dark:text-gray-300">No orders found.</div>
-        <div v-else class="space-y-6">
-          <div
-            v-for="order in paginatedOrders"
-            :key="order._id"
-            class="border p-4 rounded-lg bg-white dark:bg-gray-700 shadow-md hover:shadow-lg transition-shadow duration-300"
-          >
-            <div class="flex justify-between items-center cursor-pointer" @click="toggleOrderDetails(order._id)">
-              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Order #{{ order._id }}</h2>
-              <span :class="isOrderOpen(order._id) ? 'rotate-180' : ''" class="transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-gray-500 dark:text-gray-300">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </span>
-            </div>
-            <p class="text-gray-600 dark:text-gray-400 mt-2">Date: {{ new Date(order.createdAt).toLocaleString() }}</p>
-            <p class="text-gray-600 dark:text-gray-400">Total: {{ order.totalPrice }} €</p>
-            <p class="text-gray-600 dark:text-gray-400">Status: {{ order.status }}</p> <!-- Displaying the delivery status -->
+  <div class="flex min-h-screen bg-gray-100 dark:bg-gray-800">
+    <!-- Include the AccountSidebar component -->
+    <AccountSideBar class="w-64"></AccountSideBar>
 
-            <!-- Order details are shown/hidden based on the state -->
-            <div v-if="isOrderOpen(order._id)" class="mt-4 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-              <ul class="space-y-3">
-                <li
+    <!-- Main Content Area -->
+    <div class="flex-1 p-6 bg-white dark:bg-gray-600 rounded-lg shadow-lg">
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">My Orders</h1>
+
+      <!-- Filter Section -->
+      <div class="flex justify-between items-center mb-6">
+        <label class="text-gray-700 dark:text-gray-300">Orders per page:</label>
+        <select
+          v-model="ordersPerPage"
+          @change="updateOrdersPerPage"
+          class="ml-2 p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+
+      <div v-if="loading" class="text-gray-700 dark:text-gray-300">Loading orders...</div>
+      <div v-else-if="orders.length === 0" class="text-gray-700 dark:text-gray-300">No orders found.</div>
+      <div v-else class="space-y-6">
+        <div
+          v-for="order in paginatedOrders"
+          :key="order._id"
+          class="border p-4 rounded-lg bg-white dark:bg-gray-700 shadow-md hover:shadow-lg transition-shadow duration-300"
+        >
+          <div class="flex justify-between items-center cursor-pointer" @click="toggleOrderDetails(order._id)">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Order #{{ order._id }}</h2>
+            <span :class="isOrderOpen(order._id) ? 'rotate-180' : ''" class="transition-transform ">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-gray-500 dark:text-gray-300">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mt-2">Date: {{ new Date(order.createdAt).toLocaleString() }}</p>
+          <p class="text-gray-600 dark:text-gray-400">Total: {{ order.totalPrice }} €</p>
+          <p class="text-gray-600 dark:text-gray-400">Status: {{ order.status }}</p> <!-- Displaying the delivery status -->
+
+          <!-- Order details are shown/hidden based on the state -->
+          <div v-if="isOrderOpen(order._id)" class="mt-4">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400  border dark:border-gray-600">
+                <tr>
+                  <th scope="col" class="px-6 py-3">Product name</th>
+                  <th scope="col" class="px-6 py-3">Quantity</th>
+                  <th scope="col" class="px-6 py-3">Price</th>
+                  <th scope="col" class="px-6 py-3">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
                   v-for="item in order.items"
                   :key="item._id"
-                  class="flex justify-between items-center bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm"
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 >
-                  <RouterLink :to="`/product-details/${item.productId}`" class="text-gray-800 dark:text-gray-200">{{ item.name }} (x{{ item.quantity }})</RouterLink>
-                  <div class="text-gray-800 dark:text-gray-200">{{ item.price }} €</div>
-                </li>
-              </ul>
-            </div>
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <RouterLink :to="`/product-details/${item.productId}`">{{ item.name }}</RouterLink>
+                  </th>
+                  <td class="px-6 py-4">x {{ item.quantity || 'N/A' }}</td> <!-- Assuming color is part of the item object -->
+                  <td class="px-6 py-4">{{ item.price || 'N/A' }} €</td> <!-- Assuming category is part of the item object -->
+                  <td class="px-6 py-4">{{ item.price * item.quantity }}  €</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
   
         <!-- Pagination Controls -->
         <div v-if="totalPages > 1" class="flex justify-center mt-6 bg-gray-800 p-2 max-w-full">

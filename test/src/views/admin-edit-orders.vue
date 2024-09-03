@@ -5,17 +5,14 @@
     <!-- Filter/Search Bar -->
     <div class="mb-4 flex justify-between items-center">
       <div class="relative">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search Orders..."
-          class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"
-        />
+        <input v-model="searchQuery" type="text" placeholder="Search Orders..."
+          class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200" />
       </div>
       <div class="flex items-center">
         <div class="mr-4">
           <label for="filter-status" class="text-gray-800 dark:text-gray-200 mr-2">Status:</label>
-          <select id="filter-status" v-model="selectedStatus" @change="filterOrders" class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
+          <select id="filter-status" v-model="selectedStatus" @change="filterOrders"
+            class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
             <option value="all">All</option>
             <option value="pending">Pending</option>
             <option value="shipped">Shipped</option>
@@ -25,7 +22,8 @@
         </div>
         <div>
           <label for="sort-order" class="text-gray-800 dark:text-gray-200 mr-2">Sort by Date:</label>
-          <select id="sort-order" v-model="sortOrder" @change="sortOrders" class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
+          <select id="sort-order" v-model="sortOrder" @change="sortOrders"
+            class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
             <option value="asc">Oldest First</option>
             <option value="desc">Newest First</option>
           </select>
@@ -38,19 +36,24 @@
       <table class="min-w-full leading-normal">
         <thead>
           <tr>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-white dark:text-gray-200 uppercase tracking-wider">
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-white dark:text-gray-200 uppercase tracking-wider">
               Order ID
             </th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
               Customer Name
             </th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
               Date
             </th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
               Status
             </th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase tracking-wider">
               Total
             </th>
           </tr>
@@ -60,14 +63,16 @@
             <td class="px-5 py-5 border-b border-gray-200 bg-white dark:bg-gray-800 text-sm text-white">
               {{ order._id }}
             </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white dark:bg-gray-800 text-sm text-white">
-              {{ order.customerId.firstName }} {{ order.customerId.lastName }}
-            </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-200">
+  {{ order.customerId ? `${order.customerId.firstName} ${order.customerId.lastName}` : 'Guest' }}
+</td>
+
             <td class="px-5 py-5 border-b border-gray-200 bg-white dark:bg-gray-800 text-sm text-white">
               {{ new Date(order.createdAt).toLocaleDateString() }}
             </td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white dark:bg-gray-800 text-sm text-white">
-              <span :class="statusClass(order.status)" class="relative inline-block px-3 py-1 font-semibold leading-tight rounded-full">
+              <span :class="statusClass(order.status)"
+                class="relative inline-block px-3 py-1 font-semibold leading-tight rounded-full">
                 <span aria-hidden class="absolute inset-0 opacity-50 rounded-full"></span>
                 <span class="relative">{{ (order.status) }}</span>
               </span>
@@ -84,16 +89,19 @@
     <div class="flex justify-between items-center mt-4">
       <div>
         <label for="itemsPerPage" class="text-gray-800 dark:text-gray-200 mr-2">Items per page:</label>
-        <select id="itemsPerPage" v-model="itemsPerPage" @change="updatePagination" class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
+        <select id="itemsPerPage" v-model="itemsPerPage" @change="updatePagination"
+          class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="20">20</option>
         </select>
       </div>
       <div>
-        <button @click="prevPage" :disabled="currentPage === 1" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md disabled:opacity-50">Previous</button>
+        <button @click="prevPage" :disabled="currentPage === 1"
+          class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md disabled:opacity-50">Previous</button>
         <span class="mx-2 text-gray-800 dark:text-gray-200">Page {{ currentPage }} of {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="currentPage === totalPages" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md disabled:opacity-50">Next</button>
+        <button @click="nextPage" :disabled="currentPage === totalPages"
+          class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md disabled:opacity-50">Next</button>
       </div>
     </div>
 
@@ -107,33 +115,40 @@
             <div class="grid grid-cols-2 gap-4 ">
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">First Name:</label>
-                <input type="text" v-model="selectedOrder.firstName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1"/>
+                <input type="text" v-model="selectedOrder.firstName"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Last Name:</label>
-                <input type="text" v-model="selectedOrder.lastName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1"/>
+                <input type="text" v-model="selectedOrder.lastName"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email:</label>
-                <input type="text" v-model="selectedOrder.email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1"/>
+                <input type="text" v-model="selectedOrder.email"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Payment Method:</label>
-                <input type="text" v-model="selectedOrder.paymentMethod" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1"/>
+                <input type="text" v-model="selectedOrder.paymentMethod"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Delivery Method:</label>
-                <input type="text" v-model="selectedOrder.deliveryMethod" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1"/>
+                <input type="text" v-model="selectedOrder.deliveryMethod"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 ">Total Price:</label>
-                <input type="text" v-model="selectedOrder.totalPrice" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1"/>
+                <input type="text" v-model="selectedOrder.totalPrice"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1" />
               </div>
               <!-- Add more fields as necessary -->
             </div>
             <div class="mt-4">
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 ">Status:</label>
-              <select v-model="selectedOrder.status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1">
+              <select v-model="selectedOrder.status"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-600 dark:text-gray-200 p-1">
                 <option value="pending">Pending</option>
                 <option value="shipped">Shipped</option>
                 <option value="delivered">Delivered</option>
@@ -141,7 +156,8 @@
               </select>
             </div>
             <div class="mt-6 flex justify-end">
-              <button type="button" @click="closeModal" class="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-md">Cancel</button>
+              <button type="button" @click="closeModal"
+                class="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded-md">Cancel</button>
               <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Save</button>
             </div>
           </form>
@@ -170,24 +186,32 @@ const selectedOrder = ref(null);
 
 const fetchOrders = async () => {
   try {
-    const response = await axios.get("${backendUrl}/api/admin/orders", {
+    const response = await axios.get(`${backendUrl}/api/admin/orders`, {
       withCredentials: true,
     });
-    orders.value = response.data;
+    // Ensure orders are always an array
+    orders.value = Array.isArray(response.data) ? response.data : [];
+
+    // Sanitize each order to have a valid customerId object
+    orders.value = orders.value.map(order => ({
+      ...order,
+      customerId: order.customerId || null,
+
+    }));
   } catch (error) {
     console.error("Failed to fetch orders", error);
+    orders.value = []; // Ensure orders is an empty array on error
   } finally {
     loading.value = false;
   }
 };
-
 const filteredOrders = computed(() => {
   let filtered = orders.value;
 
   if (searchQuery.value) {
     filtered = filtered.filter(order =>
       order._id.includes(searchQuery.value) ||
-      `${order.customerId.firstName} ${order.customerId.lastName}`.toLowerCase().includes(searchQuery.value.toLowerCase())
+      `${order.firstName} ${order.lastName}`.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
   }
 
@@ -247,6 +271,12 @@ const closeModal = () => {
 
 const saveOrder = async () => {
   try {
+    const orderToSave = { ...selectedOrder.value };
+
+if (!orderToSave.customerId) {
+  // Handle guest orders appropriately
+  delete orderToSave.customerId; // Remove customerId if it's a guest order
+}
     await axios.put(`${backendUrl}/api/order/${selectedOrder.value._id}`, selectedOrder.value, {
       withCredentials: true,
     });
@@ -276,11 +306,14 @@ onMounted(fetchOrders);
 </script>
 
 <style scoped>
-.modal-enter-active, .modal-leave-active {
+.modal-enter-active,
+.modal-leave-active {
   opacity: 1;
   transition: opacity 0.3s;
 }
-.modal-enter, .modal-leave-to {
+
+.modal-enter,
+.modal-leave-to {
   opacity: 0;
 }
 </style>
