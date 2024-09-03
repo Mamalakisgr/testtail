@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-2xl p-4 font-bold text-center bg-white border border-colour-white">Products with Offers!</h1>
+    <h1 class="text-2xl mb-5 p-4 font-bold text-center bg-gray-800 text-white dark:bg-gray-1000">Products with Offers!</h1>
     
     <!-- Loading spinner -->
     <div v-if="loading" class="flex justify-center items-center h-64">
