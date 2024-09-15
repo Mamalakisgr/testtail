@@ -53,7 +53,7 @@ export const fetchWishlist = async () => {
   }
 };
 
-export const backendUrl = 'http://localhost:5174';
+export const backendUrl = 'https://testtail-xs2f.vercel.app';
 
 watch(() => (newVal) => {
   if (newVal) {
