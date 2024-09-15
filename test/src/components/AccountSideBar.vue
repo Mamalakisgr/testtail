@@ -1,6 +1,6 @@
 <!-- AccountSidebar.vue -->
 <template>
-    <aside class="w-64 bg-gray-800 text-white p-6">
+    <aside class="w-64 bg-gray-700 text-white p-6">
       <h2 class="text-xl font-semibold mb-6">Account Settings</h2>
       <nav class="space-y-4">
         <RouterLink to="/my-account" class="block py-2 px-4 rounded hover:bg-gray-700" :class="{ 'bg-gray-700': isActive('/my-account') }">

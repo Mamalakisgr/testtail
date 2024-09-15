@@ -4,17 +4,17 @@
     <AccountSidebar />
 
     <!-- Main Content Area -->
-    <div class="flex-1 p-6 bg-white dark:bg-gray-600 rounded-l shadow-lg border p-4  bg-white dark:bg-gray-700 shadow-md hover:shadow-lg transition-shadow duration-300">
+    <div class="flex-1 p-6  rounded-l shadow-lg  p-4  shadow-md hover:shadow-lg transition-shadow duration-300">
       <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">My Account</h1>
       <!-- User Account Details -->
-      <div class="bg-white p-4 rounded-lg shadow-md dark:bg-gray-500">
+      <div class=" p-4 rounded-lg shadow-md dark:bg-gray-500">
         <p class="mb-10 text-lg font-semibold text-gray-800 dark:text-gray-200">Edit your info</p>
         <div class="mb-4">
           <label for="name" class="block text-gray-700 ">Name:</label>
           <input
             v-model="user.name"
             id="name"
-            class=" p-1 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 "
+            class=" p-1 mt-1 block w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 "
           />
         </div>
         <div class="mb-4 ">
@@ -22,7 +22,7 @@
           <input
             v-model="user.lastName"
             id="lastName"
-            class="p-1 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 "
+            class="p-1 mt-1 block w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 "
           />
         </div>
         <div>
@@ -31,7 +31,7 @@
             v-model="user.email"
             id="email"
             disabled
-            class="p-1 mt-1 block w-full bg-gray-100 cursor-not-allowed rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 "
+            class="p-1 mt-1 block w-full bg-gray-100 cursor-not-allowed rounded-md  shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 "
           />
         </div>
         <div>
