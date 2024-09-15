@@ -125,30 +125,35 @@ import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { addToCart } from '@/js';
 import Footer from '../components/Footer.vue';
-import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';  // Adjust the import path accordingly
+import { wishlist, fetchWishlist, toggleWishlist } from '@/js/wishlist.js';
 import Breadcrumb from '../components/Breadcrump.vue';
-import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+import { backendUrl } from '@/js/index';
+
+const props = defineProps({
+  categoryId: {
+    type: String,
+    required: true, // Adjust depending on whether it's required
+  },
+});
 
 const route = useRoute();
 const products = ref([]);
 const categories = ref([]);
-const category = ref(route.params.categoryId);
-
 const filters = ref({
   price: 5000,
   color: '',
   size: ''
 });
-
 const sortOrder = ref("asc"); // Default sort order
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
+const category = ref(route.params.categoryId); // Initialize category with route param
 
+// Fetch products from the backend based on the category
 const fetchProducts = async (categoryId) => {
   try {
     const response = await axios.get(`${backendUrl}/api/products`, { params: { category: categoryId } });
     products.value = response.data.map(product => {
-      // Construct the image URL or provide a fallback
       product.image = product.p_images ? `${backendUrl}/api/product-image/${product.p_images}` : '/path/to/fallback-image.jpg';
       return product;
     });
@@ -157,7 +162,7 @@ const fetchProducts = async (categoryId) => {
   }
 };
 
-
+// Fetch categories from the backend
 const fetchCategories = async () => {
   try {
     const response = await axios.get(`${backendUrl}/api/categories`);
@@ -167,34 +172,38 @@ const fetchCategories = async () => {
   }
 };
 
+// Filter products based on user filters (price, color, size)
 const filteredProducts = computed(() => {
   return products.value.filter(product => {
     return product.p_price <= filters.value.price &&
-           (filters.value.color ? product.color === filters.value.color : true) &&
-           (filters.value.size ? product.size === filters.value.size : true);
+      (filters.value.color ? product.color === filters.value.color : true) &&
+      (filters.value.size ? product.size === filters.value.size : true);
   });
 });
 
+// Sort filtered products based on selected sort order (asc or desc)
 const sortedProducts = computed(() => {
-  return filteredProducts.value.sort((a, b) => {
-    return sortOrder.value === "asc"
-      ? a.p_price - b.p_price
-      : b.p_price - a.p_price;
+  return filteredProducts.value.slice().sort((a, b) => {
+    return sortOrder.value === "asc" ? a.p_price - b.p_price : b.p_price - a.p_price;
   });
 });
 
+// Paginate the sorted products
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
   return sortedProducts.value.slice(start, end);
 });
 
+// Calculate total pages for pagination
 const totalPages = computed(() => Math.ceil(sortedProducts.value.length / itemsPerPage.value));
 
-const updatePagination = () => {
-  currentPage.value = 1; // Reset to the first page when items per page changes
+// Update sort order and reset the pagination when sorting changes
+const sortProducts = () => {
+  currentPage.value = 1; // Reset to the first page when sort order changes
 };
 
+// Pagination controls
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value -= 1;
@@ -207,23 +216,21 @@ const nextPage = () => {
   }
 };
 
-const sortProducts = () => {
-  currentPage.value = 1; // Reset to the first page when sort order changes
-};
-
+// Watch for route changes to refetch products
 watch(() => route.params.categoryId, (newCategoryId) => {
   category.value = newCategoryId;
   fetchProducts(newCategoryId);
-  
   window.scrollTo(0, 0); // Scroll to the top when the category changes
 });
 
+// Fetch products, categories, and wishlist on component mount
 onMounted(() => {
-  fetchProducts(route.params.categoryId);
+  fetchProducts(props.categoryId);
   fetchCategories();
   fetchWishlist();
 });
 </script>
+
 
 <style scoped>
 .fixed-dimensions {

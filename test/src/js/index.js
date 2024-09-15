@@ -4,6 +4,8 @@ import eventBus from './eventBus';
 import { ref, watch } from 'vue';
 
 const cartItems = ref([]);
+const wishlist = ref([]);
+
 export default {
 };
 export const addToCart = async (productId) => {
@@ -40,6 +42,17 @@ export const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
+export const fetchWishlist = async () => {
+  try {
+    const response = await axios.get(`${backendUrl}/api/wishlist-items`, {
+      withCredentials: true,
+    });
+    wishlist.value = response.data;
+  } catch (error) {
+    console.error('Error fetching wishlist items:', error);
+  }
+};
+
 export const backendUrl = 'https://testtail-xs2f.vercel.app';
 
 watch(() => (newVal) => {

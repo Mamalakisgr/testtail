@@ -9,7 +9,7 @@
                       <a href="#" class=" hover:underline">Company Profile</a>
                   </li>
                   <li class="mb-4">
-                      <a href="#" class="hover:underline">History</a>
+                      <a href="/company-history" class="hover:underline">History</a>
                   </li>
                   <li class="mb-4">
                       <a href="#" class="hover:underline">Contact</a>

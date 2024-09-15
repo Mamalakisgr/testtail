@@ -18,7 +18,7 @@ import Wishlist from '../views/Wishlist.vue'
 import MyOrders from '@/views/MyOrders.vue'
 import ShippingAddress from '@/views/MyShipping.vue';
 import BillingAddress from '@/views/MyBilling.vue';
-
+import CompanyHistory from '@/views/CompanyHistory.vue'
 import { Carousel, Slide } from 'vue-carousel';
 import '../assets/main.css';
 
@@ -56,9 +56,9 @@ const router = createRouter({
       component: BillingAddress,
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
+      path: '/company-history',
+      name: 'CompanyHistory',
+      component: CompanyHistory,
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
 
