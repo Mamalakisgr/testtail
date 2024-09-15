@@ -41,7 +41,7 @@ app.use(session({
   cookie: {
     maxAge: 600000, // Set appropriate maxAge
     httpOnly: false,
-    sameSite: 'lax', // Helps mitigate CSRF attacks
+    sameSite: 'None', // Allows cookies to be sent in cross-site requests
   },
   store: MongoStore.create({
     mongoUrl: 'mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/your-database-name',
