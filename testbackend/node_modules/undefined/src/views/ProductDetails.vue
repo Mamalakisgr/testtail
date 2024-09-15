@@ -1,5 +1,5 @@
 <template>
-  <section class="text-gray-700 body-font overflow-hidden bg-gray-300 text-white">
+  <section class="text-gray-700 body-font overflow-hidden bg-gray-700 text-white">
     <div class="container px-5 py-24 mx-auto">
       <Breadcrumb :category="product.p_category" :product="product.product_name" />
       <div class="lg:w-4/5 mx-auto flex flex-wrap rounded dark:bg-gray-900 p-2">

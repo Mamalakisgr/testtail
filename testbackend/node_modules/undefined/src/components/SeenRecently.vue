@@ -1,7 +1,7 @@
 <template>
-    <div v-if="hasRecentProducts" class="">
-      <h1 class="text-2xl  p-4 font-bold text-center  bg-gray-800 text-white dark:bg-gray-1000">Products that you've seen recently :</h1>
-      <div class="w-full bg-gray-200 rounded-lg flex flex-wrap justify-center">
+    <div v-if="hasRecentProducts" class="bg-gray-800">
+      <h1 class="text-2xl  p-4 font-bold text-center  bg-gray-800 text-white dark:bg-gray-1000 shadow-md">Products that you've seen recently :</h1>
+      <div class="w-full bg-gray-700 rounded-lg flex flex-wrap justify-center">
         <div
           v-for="(product, index) in recentProducts"
           :key="index"

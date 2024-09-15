@@ -15,8 +15,8 @@
 
 
         <!-- Conditionally Display Billing Address Form -->
-        <div v-if="!sameAsShipping">
-          <h2 class="text-lg font-semibold mb-4">Billing Address</h2>
+        <div v-if="!sameAsShipping" class="max-w-lg mx-auto bg-white p-8 rounded-lg">
+          <h2 class="text-lg font-semibold mb-4 text-black ">Billing Address</h2>
           <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input type="text" v-model="formData.billingFirstName" placeholder="Billing First Name" class="p-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none" />

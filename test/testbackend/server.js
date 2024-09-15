@@ -711,11 +711,13 @@ app.get('/api/product-image/:id', async (req, res) => {
     }
 
     const file = files[0];
-    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+    const supportedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
+
+    if (supportedImageTypes.includes(file.contentType)) {
       const readStream = gfs.openDownloadStream(_id);
       readStream.pipe(res);
     } else {
-      res.status(404).json({ err: 'Not an image' });
+      res.status(404).json({ err: 'Not a supported image type' });
     }
   } catch (error) {
     console.error('Error finding file:', error);

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 min-h-screen bg-gray-300">
+  <div class="bg-gray-100 min-h-screen bg-gray-700">
     <!-- Breadcrumb -->
     <div class="px-4 py-4 relative b-10" style="bottom: -6.25rem;">
       <Breadcrumb :category="category" />
