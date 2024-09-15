@@ -40,7 +40,7 @@ export const fetchCartItems = async () => {
     console.error('Failed to fetch cart items', error);
   }
 };
-export const backendUrl = 'http://localhost:5174';
+export const backendUrl = 'https://testtail-xs2f.vercel.app';
 
 watch(() => (newVal) => {
   if (newVal) {
