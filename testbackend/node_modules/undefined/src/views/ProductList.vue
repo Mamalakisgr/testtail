@@ -23,12 +23,12 @@
             </div>
             <!-- Filters Section -->
             <div class="mt-8">
-              <h2 class="text-xl font-bold mb-4 p-1 rounded bg-gray-600">Filters</h2>
-              <div>
-                <h3 class="text-lg font-semibold mb-2">Price Range</h3>
-                <input type="range" min="0" max="5000" v-model="filters.price" class="w-full" />
-                <p>Max Price: {{ filters.price }}€</p>
-              </div>
+  <h2 class="text-xl font-bold mb-4 p-1 rounded bg-gray-600">Filters</h2>
+  <div>
+    <h3 class="text-lg font-semibold mb-2">Price Range</h3>
+    <input type="range" min="0" max="5000" v-model.number="filters.price" class="w-full" />
+    <p>Max Price: {{ filters.price }}€</p>
+  </div>
               <div class="mt-4">
                 <h3 class="text-lg font-semibold mb-2">Color</h3>
                 <select v-model="filters.color" class="w-full border rounded px-2 py-1 text-black">
@@ -118,7 +118,6 @@
   </div>
   <Footer />
 </template>
-
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
@@ -132,7 +131,7 @@ import { backendUrl } from '@/js/index';
 const props = defineProps({
   categoryId: {
     type: String,
-    required: true, // Adjust depending on whether it's required
+    required: true,
   },
 });
 
@@ -140,14 +139,14 @@ const route = useRoute();
 const products = ref([]);
 const categories = ref([]);
 const filters = ref({
-  price: 5000,
+  price: 5000, // Default maximum price
   color: '',
   size: ''
 });
 const sortOrder = ref("asc"); // Default sort order
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
-const category = ref(route.params.categoryId); // Initialize category with route param
+const category = ref(route.params.categoryId);
 
 // Fetch products from the backend based on the category
 const fetchProducts = async (categoryId) => {
@@ -155,6 +154,7 @@ const fetchProducts = async (categoryId) => {
     const response = await axios.get(`${backendUrl}/api/products`, { params: { category: categoryId } });
     products.value = response.data.map(product => {
       product.image = product.p_images ? `${backendUrl}/api/product-image/${product.p_images}` : '/path/to/fallback-image.jpg';
+      product.p_price = parseFloat(product.p_price); // Ensure the price is a number
       return product;
     });
   } catch (error) {
@@ -175,9 +175,11 @@ const fetchCategories = async () => {
 // Filter products based on user filters (price, color, size)
 const filteredProducts = computed(() => {
   return products.value.filter(product => {
-    return product.p_price <= filters.value.price &&
-      (filters.value.color ? product.color === filters.value.color : true) &&
-      (filters.value.size ? product.size === filters.value.size : true);
+    const productPrice = parseFloat(product.p_price); // Ensure price is a number
+    const maxPrice = parseFloat(filters.value.price); // Ensure filter price is a number
+    return productPrice <= maxPrice && // Compare prices correctly
+      (!filters.value.color || product.color === filters.value.color) &&
+      (!filters.value.size || product.size === filters.value.size);
   });
 });
 
