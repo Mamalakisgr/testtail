@@ -1,8 +1,8 @@
 <template>
-  <fwb-breadcrumb solid>
+  <fwb-breadcrumb solid class="">
     <fwb-breadcrumb-item home href="/">
       <router-link to="/" class="ml-1 text-gray-500 hover:text-gray-700 md:ml-2">
-        Home
+        
       </router-link>
     </fwb-breadcrumb-item>
     <fwb-breadcrumb-item v-if="currentCategory" href="#">
