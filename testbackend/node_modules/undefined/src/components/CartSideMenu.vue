@@ -11,8 +11,8 @@
             <div class="loader"></div>
           </div>
 
-          <!-- Cart Items -->
-          <div v-else>
+     <!-- Cart Items -->
+     <div v-else>
             <div v-if="cartItems.length">
               <ul>
                 <li v-for="(item, index) in cartItems" :key="index" class="mb-2 flex items-center">
@@ -23,10 +23,23 @@
                     </RouterLink>
                     <span class="block text-sm text-gray-400">{{ item.quantity }} x</span>
                   </div>
-                  <span>{{ (item.quantity * item.price).toFixed(2) }}</span>
+                  
+                  <!-- Display original price first, then offer price if available -->
+                  <div class="text-right">
+                    <div v-if="item.offer_price">
+                      <span class="line-through text-gray-400">{{ (item.quantity * item.price).toFixed(2) }} €</span>
+                      <br>
+                      <span class="text-red-500">{{ (item.quantity * item.offer_price).toFixed(2) }} €</span>
+                    </div>
+                    <div v-else>
+                      <span>{{ (item.quantity * item.price).toFixed(2) }} €</span>
+                    </div>
+                  </div>
+
                   <button @click="removeFromCart(item.productId)" class="ml-2 text-red-500 hover:text-red-700">X</button>
                 </li>
               </ul>
+              
               <RouterLink to="/cart" class="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center block">
                 Cart Page
               </RouterLink>

@@ -37,9 +37,9 @@ import { backendUrl } from '@/js/index'; // Adjust the path if necessary
 
 export default {
   name: "OrderSynopsis",
- 
+
   setup(props, { emit }) {
-    const cartItems = ref([]);
+    const cartItems = ref([]); // Initialize cart items as a ref
 
     const fetchCartItems = async () => {
       try {
@@ -54,22 +54,37 @@ export default {
       fetchCartItems();
     });
 
+    // Calculate the original price of all items in the cart
     const originalPrice = computed(() => {
-      return cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0);
-    });
+  return cartItems.value.reduce((total, item) => {
+    return total + (item.price || 0) * (item.quantity || 0);
+  }, 0);
+});
 
-    const savings = computed(() => {
-      return 0; // Example savings value
-    });
+// Calculate the total savings based on the difference between the price and offer price
+const savings = computed(() => {
+  return cartItems.value.reduce((total, item) => {
+    // Only calculate savings if there is an offer price
+    const itemSavings = (item.price || 0) - (item.offer_price || item.price); // No savings if no offer price
+    return total + itemSavings * (item.quantity || 0); // Multiply by quantity
+  }, 0);
+});
 
+
+
+    // Set delivery or pickup charges based on user selection (can be a prop)
+    const deliveryOption = 'pickup'; // Example: this could be dynamically set
     const deliveryPickup = computed(() => {
-      return 99; // Example store pickup value
+      return deliveryOption === 'pickup' ? 0 : 99; // 99 for delivery, 0 for pickup
     });
 
+    // Calculate tax (assuming it's a percentage of the original price)
+    const taxRate = 0.08; // Example: 8% tax
     const tax = computed(() => {
-      return 24; // Example tax value
+      return originalPrice.value * taxRate;
     });
 
+    // Calculate the total price
     const totalPrice = computed(() => {
       return originalPrice.value - savings.value + deliveryPickup.value + tax.value;
     });

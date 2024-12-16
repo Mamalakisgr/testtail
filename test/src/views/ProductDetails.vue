@@ -40,8 +40,8 @@
             <div class="flex ml-6 items-center">
               <span class="mr-3">Size</span>
               <div class="relative">
-                <select v-model="selectedSize" class="rounded border appearance-none border-gray-400 py-2 focus:outline-none focus:border-red-500 text-base pl-3 pr-10">
-                  <option v-for="size in sizes" :key="size" :value="size">{{ size }}</option>
+                <select v-model="selectedSize" class="rounded border appearance-none border-gray-400 py-2 focus:outline-none focus:border-red-500 text-base pl-3 pr-10 text-gray-600">
+                  <option v-for="size in sizes" :key="size" :value="size" class="text-gray-600">{{ size }}</option>
                 </select>
                 <span class="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
                   <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4" viewBox="0 0 24 24">
@@ -52,7 +52,17 @@
             </div>
           </div>
           <div class="flex">
-            <span class="title-font font-medium text-2xl text-white">{{ product.p_price }} €</span>
+            <div>
+                <span v-if="product.offer_price" class="text-lg font-bold text-red-600">
+                  {{ product.offer_price }} €
+                </span>
+                <span v-if="product.offer_price" class="text-base text-gray-500 line-through ml-2">
+                  {{ product.p_price }} €
+                </span>
+                <span v-else class="text-xl font-bold text-gray-900 dark:text-white">
+                  {{ product.p_price }} €
+                </span>
+              </div>
             <button @click="addToCart(product._id, 1)" class="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">Add to Cart</button>
             <button
             @click="toggleWishlist(product._id)"

@@ -99,7 +99,17 @@
         <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ product.product_name }}</h5>
       </RouterLink>
       <div class="flex items-center justify-between mt-3">
-        <span class="text-3xl font-bold text-gray-900 dark:text-white">{{ product.p_price }} €</span>
+        <div>
+                <span v-if="product.offer_price" class="text-lg font-bold text-red-600">
+                  {{ product.offer_price }} €
+                </span>
+                <span v-if="product.offer_price" class="text-base text-gray-500 line-through ml-2">
+                  {{ product.p_price }} €
+                </span>
+                <span v-else class="text-xl font-bold text-gray-900 dark:text-white">
+                  {{ product.p_price }} €
+                </span>
+              </div>
         <button @click="addToCart(product._id, 1)"
           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           Add to cart

@@ -33,9 +33,15 @@
                   </div>
 
                   <div class="flex items-center justify-between md:order-3 md:justify-end">
-                    <div class="text-end md:order-4 md:w-32">
-                      <p class="text-base font-bold text-gray-900 dark:text-white">${{ item.p_price }}</p>
+                    <div v-if="item.offer_price">
+                      <span class="line-through text-gray-400">{{ item.p_price }} €</span>
+                      <br>
+                      <span class="text-red-500">{{  item.offer_price }} €</span>
                     </div>
+                    <div v-else>
+                      <span class="text-gray-400">{{ (item.p_price) }} €</span>
+                    </div>
+                  
                   </div>
                   <div class="flex items-center gap-4 md:order-4">
                     <button @click="addToCart(item._id, 1)" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</button> 

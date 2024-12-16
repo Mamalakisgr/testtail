@@ -68,7 +68,15 @@
                     </button>
                   </div>
                   <div class="text-end md:order-4 md:w-32">
-                    <p class="text-base font-bold text-gray-900 dark:text-white">${{ item.price * item.quantity }}</p>
+                    <div v-if="item.offer_price">
+                      <span class="line-through text-gray-400">{{ (item.quantity * item.price).toFixed(2) }} €</span>
+                      <br>
+                      <span class="text-red-500">{{ (item.quantity * item.offer_price).toFixed(2) }} €</span>
+                    </div>
+                    <div v-else>
+                      <span class="text-white">{{ (item.quantity * item.price).toFixed(2) }} €</span>
+                    </div>
+                 
                   </div>
                 </div>
 
@@ -270,25 +278,45 @@ watch(() => (newVal) => {
     fetchCartItems();
   }
 });
+// Calculate the original price of all items in the cart
 const originalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0);
+  return cartItems.value.reduce((total, item) => {
+    return total + (item.price || 0) * (item.quantity || 0);
+  }, 0);
 });
 
+// Calculate the total savings based on the difference between the price and offer price
 const savings = computed(() => {
-  return 0; // Example savings value
+  return cartItems.value.reduce((total, item) => {
+    // Only calculate savings if there is an offer price
+    const itemSavings = (item.price || 0) - (item.offer_price || item.price); // No savings if no offer price
+    return total + itemSavings * (item.quantity || 0); // Multiply by quantity
+  }, 0);
 });
 
+// Set delivery or pickup charges based on user selection (can be a prop)
+const deliveryOption = 'pickup'; // This could be dynamically set
 const deliveryPickup = computed(() => {
-  return 99; // Example store pickup value
+  return deliveryOption === 'pickup' ? 0 : 99; // 99 for delivery, 0 for pickup
 });
 
+// Calculate tax (assuming it's a percentage of the original price)
+const taxRate = 0.08; // Example: 8% tax
 const tax = computed(() => {
-  return 24; // Example tax value
+  return originalPrice.value * taxRate;
 });
 
+// Calculate the total price (including savings, delivery charges, and tax)
 const totalPrice = computed(() => {
-  return originalPrice.value - savings.value + deliveryPickup.value + tax.value;
+  const totalBeforeTaxAndDelivery = cartItems.value.reduce((total, item) => {
+    // Use offer price if available, otherwise fallback to regular price
+    const priceToUse = item.offer_price || item.price;
+    return total + (priceToUse || 0) * (item.quantity || 0);
+  }, 0);
+
+  return totalBeforeTaxAndDelivery + deliveryPickup.value + tax.value;
 });
+
 onMounted(()=>{
   fetchCartItems();
 })

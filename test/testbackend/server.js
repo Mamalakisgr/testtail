@@ -552,6 +552,7 @@ app.post('/api/add-to-cart', async (req, res) => {
           name: product.product_name,
           price: product.p_price,
           image:product.p_images,
+          offer_price:product.offer_price,
           quantity
         });
       }
@@ -575,6 +576,7 @@ app.post('/api/add-to-cart', async (req, res) => {
           productId,
           name: product.name,
           price: product.price,
+          offer_price:product.offer_price,
           image:`/api/product-image/${product.p_images}`,
           quantity
         });
@@ -601,7 +603,8 @@ app.get('/api/cart-items', async (req, res) => {
         name: item.name,
         image: item.image,
         price: item.price,
-        quantity: item.quantity
+        quantity: item.quantity,
+        offer_price: item.offer_price
       }));
     } else if (req.session.cart) {
       // Guest user
@@ -614,7 +617,8 @@ app.get('/api/cart-items', async (req, res) => {
             name: product.product_name,
             image: product.p_images,
             price: product.p_price,
-            quantity: item.quantity
+            quantity: item.quantity,
+            offer_price: item.offer_price
           });
         } else {
           console.error(`Product with ID ${item.productId} not found`);
