@@ -44,7 +44,7 @@ app.use(session({
     sameSite: 'lax', // Allows cookies to be sent in cross-site requests
   },
   store: MongoStore.create({
-    mongoUrl: 'mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/your-database-name',
+    mongoUrl: 'mongodb+srv://test:test@cluster0.dvogu42.mongodb.net/your-database-name',
     ttl: 14 * 24 * 60 * 60, // 14 days
     autoRemove: 'native' // Default
   })
@@ -60,7 +60,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 let gfs;
 
-mongoose.connect('mongodb+srv://charzevg:OoUBGAMh2rlpVdgs@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect('mongodb+srv://test:test@cluster0.dvogu42.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
 
 })
 .then(() => {
