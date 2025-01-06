@@ -88,6 +88,7 @@
   <div v-if="showErrorToast" class="fixed top-0 right-0 m-4 p-4 bg-red-500 text-white rounded shadow-lg">
     {{ errorMessage }}
   </div>
+  <Footer/>
   </template>
 
 <script setup>
@@ -95,6 +96,7 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import AccountSideBar from '../components/AccountSideBar.vue';
 import { backendUrl } from '@/js/index';
+import Footer from '../components/Footer.vue';
 
 const addressesRaw = ref([]);
 const addresses = computed(() => addressesRaw.value);

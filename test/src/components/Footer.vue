@@ -6,13 +6,13 @@
               <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Company</h2>
               <ul class="text-gray-500 dark:text-gray-400 font-medium">
                   <li class="mb-4">
-                      <a href="#" class=" hover:underline">Company Profile</a>
+                      <a href="/company-profile" class=" hover:underline">Company Profile</a>
                   </li>
                   <li class="mb-4">
                       <a href="/company-history" class="hover:underline">History</a>
                   </li>
                   <li class="mb-4">
-                      <a href="#" class="hover:underline">Contact</a>
+                      <a href="/contact-page" class="hover:underline">Contact</a>
                   </li>
                   <li class="mb-4">
                       <a href="#" class="hover:underline">Career</a>
@@ -37,18 +37,15 @@
               <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
               <ul class="text-gray-500 dark:text-gray-400 font-medium">
                   <li class="mb-4">
-                      <a href="#" class="hover:underline">Privacy Policy</a>
+                      <a href="/privacy" class="hover:underline">Privacy Policy</a>
                   </li>
                   <li class="mb-4">
-                      <a href="#" class="hover:underline">Licensing</a>
-                  </li>
-                  <li class="mb-4">
-                      <a href="#" class="hover:underline">Terms &amp; Conditions</a>
+                      <a href="/terms-conditions" class="hover:underline">Terms &amp; Conditions</a>
                   </li>
               </ul>
           </div>
         </div>
-        <div class="px-4 py-6 bg-gray-700 dark:bg-gray-800 md:flex md:items-center md:justify-between">
+        <div class="px-4 py-6 bg-gray-800 dark:bg-gray-1000 md:flex md:items-center md:justify-between">
           <span class="text-sm text-gray-500 dark:text-gray-300 sm:text-center">© 2024 <a href="https://flowbite.com/">Charis Zevgolatis</a>. All Rights Reserved.</span>
           <div class="flex mt-4 sm:justify-center md:mt-0 space-x-5 rtl:space-x-reverse">
               <a href="#" class="text-gray-400 hover:text-gray-900 dark:hover:text-white">

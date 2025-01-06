@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { GridFsStorage } = require('multer-gridfs-storage');
+const nodemailer = require("nodemailer");
 
 const session = require('express-session');
 const multer = require('multer');
@@ -98,6 +99,50 @@ function checkFileType(file, cb) {
     cb('Error: Images Only!');
   }
 }
+
+// Nodemailer Transporter Configuration
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "dasexyninja@gmail.com", // Your Gmail address
+    pass: "ertb arfq nltp supk", // Your Gmail app password ertb arfq nltp supk
+
+  },
+});
+
+app.post("/api/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  console.log("Received Contact Form Submission:", { name, email, message });
+
+  const mailOptions = {
+    from: `"${name}" <${email}>`,
+    to: "dasexyninja@gmail.com",
+    subject: `New Contact Form Submission from ${name}`,
+    text: `
+      You have received a new message from your contact form.
+
+      Name: ${name}
+      Email: ${email}
+
+      Message:
+      ${message}
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully!");
+    res.status(200).json({ success: true, message: "Email sent successfully!" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ success: false, message: "Failed to send email." });
+  }
+});
+
+
+
+
 app.get('/api/admin/orders', async (req, res) => {
   try {
     // Here you might want to check if the logged-in user is an admin.
@@ -342,6 +387,71 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
+app.put('/api/cart-items/:productId', async (req, res) => {
+  const { productId } = req.params;
+  const { quantity } = req.body;
+
+  // Validate the quantity
+  if (!quantity || quantity < 1) {
+    return res.status(400).json({ error: 'Quantity must be at least 1' });
+  }
+
+  console.log('Received productId for update:', productId);
+  console.log('New quantity:', quantity);
+
+  if (req.session && req.session.userId) {
+    // Logged-in user case
+    try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        console.log('User not found');
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      console.log('User cart:', user.cart);
+
+      // Convert productId to ObjectId for comparison
+      const productIdObj = new mongoose.Types.ObjectId(productId);
+
+      const cartItemIndex = user.cart.findIndex(item => item.productId.equals(productIdObj));
+
+      if (cartItemIndex === -1) {
+        console.log('Product not found in user cart');
+        return res.status(404).json({ error: 'Product not found in cart' });
+      }
+
+      // Update the quantity
+      user.cart[cartItemIndex].quantity = quantity;
+      await user.save();
+
+      const totalItems = user.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+      res.json({ message: 'Product quantity updated', totalItems });
+    } catch (error) {
+      console.error('Error updating product quantity in user cart:', error);
+      res.status(500).json({ error: 'Server error in updating product quantity' });
+    }
+  } else {
+    // Guest user case (session-based cart)
+    if (!req.session.cart) {
+      console.log('Session cart is empty');
+      return res.status(404).json({ error: 'Cart is empty' });
+    }
+
+    const cartItemIndex = req.session.cart.findIndex(item => item.productId === productId);
+    if (cartItemIndex === -1) {
+      console.log('Product not found in session cart');
+      return res.status(404).json({ error: 'Product not found in cart' });
+    }
+
+    // Update the quantity
+    req.session.cart[cartItemIndex].quantity = quantity;
+
+    const totalItems = req.session.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    res.json({ message: 'Product quantity updated', totalItems });
+  }
+});
 
 // PUT route for updating a product
 app.put('/api/products/:productId', (req, res) => {

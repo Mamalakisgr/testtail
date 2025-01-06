@@ -1,26 +1,25 @@
 <template>
-  <div class="max-w-lg mx-auto bg-white p-8 rounded-lg">
+  <div class="max-w-lg mx-auto bg-gray-700 p-8 rounded-lg">
     <!-- Shipping Address -->
     <div>
-      <div class="text-2xl my-4">Shipping Address</div>
+      <div class="text-lg font-semibold mb-4 text-white">Shipping Address</div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mb-4">
-          <label for="firstName" class="block text-gray-700 mb-2">First Name</label>
+          <label for="firstName" class="block text-white mb-2"></label>
           <input v-model="formData.firstName" type="text" id="firstName" name="firstName"
-            class="w-full form-input p-1 border rounded-md shadow-sm" required>
+            class="w-full form-input p-1 border rounded-md shadow-sm bg-gray-700 " placeholder=" First Name" required>
           <span v-if="errors.firstName" class="text-red-500 text-sm">{{ errors.firstName }}</span>
         </div>
         <div class="mb-4">
-          <label for="lastName" class="block text-gray-700 mb-2">Last Name</label>
+          <label for="lastName" class="block text-white mb-2"></label>
           <input v-model="formData.lastName" type="text" id="lastName" name="lastName"
-            class="w-full form-input p-1 border rounded-md shadow-sm" required>
+            class="w-full form-input p-1 border rounded-md shadow-sm bg-gray-700" placeholder=" Last Name" required>
           <span v-if="errors.lastName" class="text-red-500 text-sm">{{ errors.lastName }}</span>
         </div>
       </div>
       <div class="mb-4">
-        <label for="email" class="block text-gray-700 mb-2">Email Address</label>
         <input v-model="formData.email" type="email" id="email" name="email"
-          class="w-full form-input p-1 border rounded-md shadow-sm" required>
+          class="w-full form-input p-1 border rounded-md shadow-sm bg-gray-700" placeholder=" Email Address" required>
         <span v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</span>
       </div>
       <div class="mb-4">
@@ -30,22 +29,22 @@
         </div>
       </div>
       <div class="mb-4">
-        <label for="address" class="block text-gray-700 mb-2">Address</label>
+        <label for="address" class="block text-white mb-2"></label>
         <input v-model="formData.address" id="address" name="address" 
-          class="w-full form-input p-1 border rounded-md shadow-sm" required>
+          class="w-full form-input p-1 border rounded-md shadow-sm bg-gray-700" placeholder="Shipping Address" required>
         <span v-if="errors.address" class="text-red-500 text-sm">{{ errors.address }}</span>
       </div>
       <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label for="city" class="block text-gray-700 mb-2">City</label>
+          <label for="city" class="block text-white mb-2"></label>
           <input v-model="formData.city" type="text" id="city" name="city"
-            class="w-full form-input p-1 border rounded-md shadow-sm" required>
+            class="w-full form-input p-1 border rounded-md shadow-sm bg-gray-700"  placeholder=" City" required>
           <span v-if="errors.city" class="text-red-500 text-sm">{{ errors.city }}</span>
         </div>
         <div>
-          <label for="zip" class="block text-gray-700 mb-2">ZIP Code</label>
+          <label for="zip" class="block text-white mb-2"></label>
           <input v-model="formData.zip" type="text" id="zip" name="zip"
-            class="w-full form-input p-1 border rounded-md shadow-sm" required>
+            class="w-full form-input p-1 border rounded-md shadow-sm bg-gray-700" placeholder=" ZIP Code" required>
           <span v-if="errors.zip" class="text-red-500 text-sm">{{ errors.zip }}</span>
         </div>
       </div>

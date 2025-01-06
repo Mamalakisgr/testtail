@@ -6,52 +6,76 @@
     </div>
     <div class="mt-4 space-y-2">
       <div v-if="originalPrice > 0" class="flex items-center justify-between">
-        <dt class="text-base font-normal text-gray-400 dark:text-black-400">Original Price</dt>
-        <dd class="text-base font-medium text-gray-900 dark:text-black-100">${{ originalPrice }}</dd>
+        <dt class="text-base font-normal text-gray-400 dark:text-black-400">
+          Original Price
+        </dt>
+        <dd class="text-base font-medium text-gray-900 dark:text-black-100">
+          ${{ originalPrice }}
+        </dd>
       </div>
       <div v-if="savings > 0" class="flex items-center justify-between">
-        <dt class="text-base font-normal text-gray-400 dark:text-black-400">Savings</dt>
+        <dt class="text-base font-normal text-gray-400 dark:text-black-400">
+          Savings
+        </dt>
         <dd class="text-base font-medium text-green-600">-${{ savings }}</dd>
       </div>
       <div v-if="deliveryPickup > 0" class="flex items-center justify-between">
-        <dt class="text-base font-normal text-gray-400 dark:text-black-400">Store Pickup</dt>
-        <dd class="text-base font-medium text-gray-900 dark:text-black-100">${{ deliveryPickup }}</dd>
+        <dt class="text-base font-normal text-gray-400 dark:text-black-400">
+          Delivery Pickup
+        </dt>
+        <dd class="text-base font-medium text-gray-900 dark:text-black-100">
+          ${{ deliveryPickup }}
+        </dd>
       </div>
       <div v-if="tax > 0" class="flex items-center justify-between">
-        <dt class="text-base font-normal text-gray-400 dark:text-black-400">Tax</dt>
-        <dd class="text-base font-medium text-gray-900 dark:text-black-100">${{ tax }}</dd>
+        <dt class="text-base font-normal text-gray-400 dark:text-black-400">
+          Tax
+        </dt>
+        <dd class="text-base font-medium text-gray-900 dark:text-black-100">
+          ${{ tax }}
+        </dd>
       </div>
     </div>
-    <div class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700 mt-4">
+    <div
+      class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700 mt-4"
+    >
       <dt class="text-base font-bold text-gray-400 dark:text-black">Total</dt>
-      <dd class="text-base font-bold text-gray-400 dark:text-black">${{ totalPrice }}</dd>
+      <dd class="text-base font-bold text-gray-400 dark:text-black">
+        ${{ totalPrice }}
+      </dd>
     </div>
   </div>
 </template>
 
 <script>
 import Item from "./Item.vue";
-import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
-import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+import { ref, computed, onMounted, watch } from "vue";
+import axios from "axios";
+import { backendUrl } from "@/js/index"; // Adjust the path if necessary
 
 export default {
   name: "Summary",
   components: {
-    Item
+    Item,
   },
   props: {
-    items: Array
+    items: Array, // Cart items
+    deliveryOption: {
+      type: String,
+      required: true, // Make sure the parent provides the delivery option
+    },
   },
-  setup() {
+  setup(props) {
     const cartItems = ref([]);
 
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
+        const response = await axios.get(`${backendUrl}/api/cart-items`, {
+          withCredentials: true,
+        });
         cartItems.value = response.data.items;
       } catch (error) {
-        console.error('Failed to fetch cart items', error);
+        console.error("Failed to fetch cart items", error);
       }
     };
 
@@ -59,35 +83,35 @@ export default {
       fetchCartItems();
     });
 
-// Calculate the original price of all items in the cart
-const originalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    return total + (item.price || 0) * (item.quantity || 0);
-  }, 0);
-});
-
-// Calculate the total savings based on the difference between the price and offer price
-const savings = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    // Only calculate savings if there is an offer price
-    const itemSavings = (item.price || 0) - (item.offer_price || item.price); // No savings if no offer price
-    return total + itemSavings * (item.quantity || 0); // Multiply by quantity
-  }, 0);
-});
-
-    // Set delivery or pickup charges based on user selection (can be a prop)
-    const deliveryOption = 'pickup'; // Example: this could be dynamically set
-    const deliveryPickup = computed(() => {
-      return deliveryOption === 'pickup' ? 0 : 99; // 99 for delivery, 0 for pickup
+    const originalPrice = computed(() => {
+      return cartItems.value.reduce((total, item) => {
+        return total + (item.price || 0) * (item.quantity || 0);
+      }, 0);
     });
 
-    // Calculate tax (assuming it's a percentage of the original price)
+    const savings = computed(() => {
+      return cartItems.value.reduce((total, item) => {
+        const itemSavings =
+          (item.price || 0) - (item.offer_price || item.price);
+        return total + itemSavings * (item.quantity || 0);
+      }, 0);
+    });
+
+    const deliveryPickup = ref(props.deliveryOption === "pickup" ? 0 : 99);
+
+    // Watch for changes in deliveryOption prop
+    watch(
+      () => props.deliveryOption,
+      (newVal) => {
+        deliveryPickup.value = newVal === "pickup" ? 0 : 99;
+      }
+    );
+
     const taxRate = 0.08; // Example: 8% tax
     const tax = computed(() => {
       return originalPrice.value * taxRate;
     });
 
-    // Calculate the total price
     const totalPrice = computed(() => {
       return originalPrice.value - savings.value + deliveryPickup.value + tax.value;
     });
@@ -98,11 +122,12 @@ const savings = computed(() => {
       savings,
       deliveryPickup,
       tax,
-      totalPrice
+      totalPrice,
     };
-  }
+  },
 };
 </script>
+
 
 <style scoped>
 /* Add your styles here */

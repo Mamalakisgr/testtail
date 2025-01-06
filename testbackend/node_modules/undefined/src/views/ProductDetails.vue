@@ -180,6 +180,7 @@ const storeRecentProduct = (product) => {
     product_name: product.product_name,
     image: product.image,
     p_price: product.p_price,
+    offer_price: product.offer_price
   });
 
   // If the list exceeds 5 items, remove the last one (FILO principle)

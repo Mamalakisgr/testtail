@@ -11,7 +11,7 @@
     </div>
     <div class="md:col-span-1 flex flex-col items-end justify-center">
       <p class="text-sm text-gray-500 dark:text-gray-400">Unit Price</p>
-      <p class="text-base font-bold text-gray-900 dark:text-gray-100">${{ item.price }}</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100">${{ item.offer_price || item.price }}</p>
     </div>
     <div class="md:col-span-1 flex flex-col items-end justify-center">
       <p class="text-sm text-gray-500 dark:text-gray-400">Quantity</p>
@@ -19,7 +19,7 @@
     </div>
     <div class="md:col-span-1 flex flex-col items-end justify-center">
       <p class="text-sm text-gray-500 dark:text-gray-400">Total Price</p>
-      <p class="text-base font-bold text-gray-900 dark:text-gray-100">${{ item.price * item.quantity }}</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100">${{  item.offer_price || item.price * item.quantity }}</p>
     </div>
   </div>
 </template>

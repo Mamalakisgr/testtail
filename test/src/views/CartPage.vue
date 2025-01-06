@@ -86,25 +86,40 @@
                   <div class="flex items-center gap-4">
                     <button
                       type="button"
+                      @click="toggleWishlist(item.productId)"
+
                       class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white"
                     >
-                      <svg
-                        class="me-1.5 h-5 w-5"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
-                        />
-                      </svg>
+                    <svg
+              v-if="wishlist.includes(item.productId)"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8.5a5.5 5.5 0 0110.42-2.2A5.5 5.5 0 0121 8.5c0 3.58-3.28 6.44-8.28 11.05L12 20.35l-1.28-1.16C6.28 14.94 3 12.08 3 8.5z"
+              />
+            </svg>
                       Add to Favorites
                     </button>
 
@@ -135,7 +150,7 @@
           <div class="hidden xl:mt-8 xl:block">
             <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">People also bought</h3>
             <div class="mt-6 grid grid-cols-3 gap-4 sm:mt-8">
-              <!-- Repeat similar structure for "People also bought" items -->
+             <AlsoBought/>
             </div>
           </div>
         </div>
@@ -157,8 +172,8 @@
                 </dl>
 
                 <dl class="flex items-center justify-between gap-4">
-                  <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Store Pickup</dt>
-                  <dd class="text-base font-medium text-gray-900 dark:text-white">${{ deliveryPickup }}</dd>
+                  <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Delivery Cost</dt>
+                  <dd class="text-base font-small text-gray-900 dark:text-white">Calculated in Checkout</dd>
                 </dl>
 
                 <dl class="flex items-center justify-between gap-4">
@@ -234,6 +249,8 @@ import Footer from '../components/Footer.vue';
 const cartItems = ref([]);
 const loading = ref(true); // Loading state
 import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+import { wishlist, toggleWishlist } from '@/js/wishlist.js';  // Adjust the import path accordingly
+import AlsoBought from '@/components/AlsoBought.vue';
 
 const fetchCartItems = async () => {
   try {
@@ -246,15 +263,44 @@ const fetchCartItems = async () => {
   }
 };
 
-const incrementQuantity = (index) => {
-  cartItems.value[index].quantity++;
-};
-
-const decrementQuantity = (index) => {
-  if (cartItems.value[index].quantity > 1) {
-    cartItems.value[index].quantity--;
+const updateCartItemQuantity = async (productId, quantity) => {
+  try {
+    await axios.put(
+      `${backendUrl}/api/cart-items/${productId}`,
+      { quantity },
+      { withCredentials: true }
+    );
+    console.log(`Updated product ${productId} with quantity ${quantity}`);
+  } catch (error) {
+    console.error(`Failed to update quantity for productId: ${productId}`, error);
   }
 };
+
+const incrementQuantity = (productId) => {
+  const index = cartItems.value.findIndex((item) => item.productId === productId);
+  if (index !== -1) {
+    cartItems.value[index].quantity++;
+    updateCartItemQuantity(productId, cartItems.value[index].quantity);
+  } else {
+    console.error(`Invalid productId: ${productId}`, cartItems.value);
+  }
+};
+
+// Decrement quantity
+const decrementQuantity = async (index) => {
+  const item = cartItems.value[index];
+  if (item && item.quantity > 1) {
+    item.quantity--;
+    try {
+      await axios.put(`${backendUrl}/api/cart-items/${item.productId}`, { quantity: item.quantity }, { withCredentials: true });
+    } catch (error) {
+      console.error('Failed to update quantity', error);
+      item.quantity++; // Revert in case of error
+    }
+  }
+};
+
+
 
 const removeItem = async (productId) => {
   if (!productId) {
@@ -295,9 +341,9 @@ const savings = computed(() => {
 });
 
 // Set delivery or pickup charges based on user selection (can be a prop)
-const deliveryOption = 'pickup'; // This could be dynamically set
+const deliveryOption = 'courier'; // This could be dynamically set
 const deliveryPickup = computed(() => {
-  return deliveryOption === 'pickup' ? 0 : 99; // 99 for delivery, 0 for pickup
+  return deliveryOption === 'courier' ? 0 : 99; // 99 for delivery, 0 for pickup
 });
 
 // Calculate tax (assuming it's a percentage of the original price)
@@ -314,7 +360,7 @@ const totalPrice = computed(() => {
     return total + (priceToUse || 0) * (item.quantity || 0);
   }, 0);
 
-  return totalBeforeTaxAndDelivery + deliveryPickup.value + tax.value;
+  return totalBeforeTaxAndDelivery + deliveryPickup.value;
 });
 
 onMounted(()=>{

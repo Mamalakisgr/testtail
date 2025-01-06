@@ -93,7 +93,7 @@
         <!-- Store Image Section -->
         <div class="w-full lg:w-1/3 flex items-center justify-center">
           <img
-            src="@/images/store.webp"
+            src="/public/store.webp"
             alt="Store Image"
             class="rounded-lg shadow-lg w-full h-auto max-w-xl"
           />
@@ -109,7 +109,7 @@
     <!-- Image Section -->
     <img
       class="object-cover w-full h-48 rounded-t-lg md:h-auto md:w-1/2 md:rounded-none md:rounded-l-lg"
-      src="@/images/store.webp"
+      src="/public/store.webp"
       alt="Store Image"
     />
 

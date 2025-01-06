@@ -1,68 +1,141 @@
 <template>
-    <div class="container mx-auto p-6 bg-white border border-colour-blue rounded-lg border ">
-      <div>
-        <h1 class="text-2xl my-4 rounded-lg shadow-md">Choose payment method</h1>
-        <div>
-          <ul class="space-y-4">
-            <li class="radiobutton flex items-start">
-              <input type="radio" id="cash" name="payment" value="cash" v-model="paymentMethod" class="mt-1">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
-              </svg>
-              <label for="cash" class="ml-2 flex flex-col">
-                <span class="font-semibold">Pay with Cash</span>
-                <span>Extra Cost: +2.5 Euro</span>
-              </label>
-            </li>
-            <li class="radiobutton flex items-start">
-              <input type="radio" id="credit-card" name="payment" value="credit-card" v-model="paymentMethod" class="mt-1">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-              </svg>
-              <label for="credit-card" class="ml-2 flex flex-col">
-                <span class="font-semibold">Credit Card</span>
-                <span class="font-semibold">No Extra Costs</span>
-              </label>
-            </li>
-            <li class="radiobutton flex items-start">
-              <input type="radio" id="paypal" name="payment" value="paypal" v-model="paymentMethod" class="mt-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="23.59375" viewBox="0 0 256 302">
-                <path fill="#27346A" d="M217.168 23.507C203.234 7.625 178.046.816 145.823.816h-93.52A13.39 13.39 0 0 0 39.076 12.11L.136 259.077c-.774 4.87 2.997 9.28 7.933 9.28h57.736l14.5-91.971l-.45 2.88c1.033-6.501 6.593-11.296 13.177-11.296h27.436c53.898 0 96.101-21.892 108.429-85.221c.366-1.873.683-3.696.957-5.477q-2.334-1.236 0 0c3.671-23.407-.025-39.34-12.686-53.765" />
-                <path fill="#27346A" d="M102.397 68.84a11.7 11.7 0 0 1 5.053-1.14h73.318c8.682 0 16.78.565 24.18 1.756a102 102 0 0 1 6.177 1.182a90 90 0 0 1 8.59 2.347c3.638 1.215 7.026 2.63 10.14 4.287c3.67-23.416-.026-39.34-12.687-53.765C203.226 7.625 178.046.816 145.823.816H52.295C45.71.816 40.108 5.61 39.076 12.11L.136 259.068c-.774 4.878 2.997 9.282 7.925 9.282h57.744L95.888 77.58a11.72 11.72 0 0 1 6.509-8.74" />
-                <path fill="#2790C3" d="M228.897 82.749c-12.328 63.32-54.53 85.221-108.429 85.221H93.024c-6.584 0-12.145 4.795-13.168 11.296L61.817 293.621c-.674 4.262 2.622 8.124 6.934 8.124h48.67a11.71 11.71 0 0 0 11.563-9.88l.474-2.48l9.173-58.136l.591-3.213a11.71 11.71 0 0 1 11.562-9.88h7.284c47.147 0 84.064-19.154 94.852-74.55c4.503-23.15 2.173-42.478-9.739-56.054c-3.613-4.112-8.1-7.508-13.327-10.28c-.283 1.79-.59 3.604-.957 5.477" />
-                <path fill="#1F264F" d="M216.952 72.128a90 90 0 0 0-5.818-1.49a110 110 0 0 0-6.177-1.174c-7.408-1.199-15.5-1.765-24.19-1.765h-73.309a11.6 11.6 0 0 0-5.053 1.149a11.68 11.68 0 0 0-6.51 8.74l-15.582 98.798l-.45 2.88c1.025-6.501 6.585-11.296 13.17-11.296h27.444c53.898 0 96.1-21.892 108.428-85.221c.367-1.873.675-3.688.958-5.477q-4.682-2.47-10.14-4.279a83 83 0 0 0-2.77-.865" />
-              </svg>
-              <label for="paypal" class="ml-2 flex flex-col">
-                <span class="font-semibold">PayPal</span>
-                <span class="font-semibold">No Extra Costs</span>
-              </label>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "PaymentSelector",
-    props: {
-      modelValue: String
+  <div class="container mx-auto p-6 bg-white border border-blue-300 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Choose Payment Method</h1>
+    <ul class="space-y-6">
+      <!-- Cash Option -->
+      <li class="flex items-start hover:bg-gray-100 p-4 rounded-lg transition duration-300">
+        <input
+          type="radio"
+          id="cash"
+          name="payment"
+          value="cash"
+          v-model="paymentMethod"
+          class="mt-1"
+        />
+        <label for="cash" class="ml-4 flex items-center gap-3 cursor-pointer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-blue-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
+            />
+          </svg>
+          <div>
+            <span class="font-semibold text-gray-800">Pay with Cash</span>
+            <p class="text-gray-600 text-sm">Extra Cost: +2.5 Euros</p>
+          </div>
+        </label>
+      </li>
+
+      <!-- Credit Card Option -->
+      <li class="flex items-start hover:bg-gray-100 p-4 rounded-lg transition duration-300">
+        <input
+          type="radio"
+          id="credit-card"
+          name="payment"
+          value="credit-card"
+          v-model="paymentMethod"
+          class="mt-1"
+        />
+        <label for="credit-card" class="ml-4 flex items-center gap-3 cursor-pointer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-blue-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2.25 8.25h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+            />
+          </svg>
+          <div>
+            <span class="font-semibold text-gray-800">Credit Card</span>
+            <p class="text-gray-600 text-sm">No Extra Costs</p>
+          </div>
+        </label>
+      </li>
+
+      <!-- PayPal Option -->
+      <li class="flex items-start hover:bg-gray-100 p-4 rounded-lg transition duration-300">
+        <input
+          type="radio"
+          id="paypal"
+          name="payment"
+          value="paypal"
+          v-model="paymentMethod"
+          class="mt-1"
+        />
+
+        <label for="paypal" class="ml-4 flex items-center gap-3 cursor-pointer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-blue-500"
+            fill="0d62ab"
+            viewBox="0 0 48 48"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+          
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M18.7,13.767l0.005,0.002C18.809,13.326,19.187,13,19.66,13h13.472c0.017,0,0.034-0.007,0.051-0.006	C32.896,8.215,28.887,6,25.35,6H11.878c-0.474,0-0.852,0.335-0.955,0.777l-0.005-0.002L5.029,33.813l0.013,0.001	c-0.014,0.064-0.039,0.125-0.039,0.194c0,0.553,0.447,0.991,1,0.991h8.071L18.7,13.767z"></path><path fill="#199be2" d="M33.183,12.994c0.053,0.876-0.005,1.829-0.229,2.882c-1.281,5.995-5.912,9.115-11.635,9.115	c0,0-3.47,0-4.313,0c-0.521,0-0.767,0.306-0.88,0.54l-1.74,8.049l-0.305,1.429h-0.006l-1.263,5.796l0.013,0.001	c-0.014,0.064-0.039,0.125-0.039,0.194c0,0.553,0.447,1,1,1h7.333l0.013-0.01c0.472-0.007,0.847-0.344,0.945-0.788l0.018-0.015	l1.812-8.416c0,0,0.126-0.803,0.97-0.803s4.178,0,4.178,0c5.723,0,10.401-3.106,11.683-9.102	C42.18,16.106,37.358,13.019,33.183,12.994z"></path><path fill="#006fc4" d="M19.66,13c-0.474,0-0.852,0.326-0.955,0.769L18.7,13.767l-2.575,11.765	c0.113-0.234,0.359-0.54,0.88-0.54c0.844,0,4.235,0,4.235,0c5.723,0,10.432-3.12,11.713-9.115c0.225-1.053,0.282-2.006,0.229-2.882	C33.166,12.993,33.148,13,33.132,13H19.66z"
+            />
+          </svg>
+          <div>
+            <span class="font-semibold text-gray-800">PayPal</span>
+            <p class="text-gray-600 text-sm">No Extra Costs</p>
+          </div>
+        </label>
+      </li>
+    </ul>
+  </div>
+</template>
+
+
+<script>
+export default {
+  name: "PaymentSelector",
+  props: {
+    modelValue: String, // The selected payment method
+  },
+  computed: {
+    paymentMethod: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit("update:modelValue", value);
+      },
     },
-    computed: {
-      paymentMethod: {
-        get() {
-          return this.modelValue;
-        },
-        set(value) {
-          this.$emit('update:modelValue', value);
-        }
+  },
+  methods: {
+    validatePayment() {
+      if (!this.paymentMethod) {
+        alert("Please select a payment method.");
+        return false;
       }
-    }
-  };
-  </script>
-  
-  <style scoped>
-  /* Add your styles here */
-  </style>
-  
+      return true;
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Add hover effects for a polished feel */
+li:hover {
+  background-color: rgba(243, 244, 246, 1); /* Tailwind's gray-100 */
+  transition: background-color 0.3s ease;
+}
+</style>

@@ -19,6 +19,11 @@ import MyOrders from '@/views/MyOrders.vue'
 import ShippingAddress from '@/views/MyShipping.vue';
 import BillingAddress from '@/views/MyBilling.vue';
 import CompanyHistory from '@/views/CompanyHistory.vue'
+import CompanyProfile from '@/views/Company-profile.vue'
+import Privacy from '@/views/Privacy.vue'
+import TermsConditions from '@/views/TermsConditions.vue'
+import ContactPage from '@/views/ContantPage.vue'
+import HotProductsPage from '@/views/HotProductsPage.vue';
 import { Carousel, Slide } from 'vue-carousel';
 import '../assets/main.css';
 
@@ -59,6 +64,43 @@ const router = createRouter({
       path: '/company-history',
       name: 'CompanyHistory',
       component: CompanyHistory,
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+
+    },
+    {
+      path: '/product-list/hot-products',
+      name: 'HotProducts',
+      component: HotProductsPage,
+    },
+    {
+      path: '/company-profile',
+      name: 'CompanyProfile',
+      component: CompanyProfile,
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+
+    },
+    {
+      path: '/contact-page',
+      name: 'ContactPage',
+      component: ContactPage,
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+
+    },
+    {
+      path: '/privacy',
+      name: 'Privacy',
+      component: Privacy,
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+
+    },
+    {
+      path: '/terms-conditions',
+      name: 'TermsConditions',
+      component: TermsConditions,
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
 

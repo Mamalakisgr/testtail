@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
+  <div class="container mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full background-color-gray-700">
     <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 sm:p-6">
       <p class="text-xl font-semibold text-gray-400 dark:text-black">Order summary</p>
       <div class="space-y-4">
@@ -13,7 +13,7 @@
             <dd class="text-base font-medium text-green-600">-{{ savings }}</dd>
           </dl>
           <dl class="flex items-center justify-between gap-4">
-            <dt class="text-base font-normal text-gray-400 dark:text-black-400">Store Pickup</dt>
+            <dt class="text-base font-normal text-gray-400 dark:text-black-400">Delivery Cost</dt>
             <dd class="text-base font-medium text-gray-400 dark:text-black">${{ deliveryPickup }}</dd>
           </dl>
           <dl class="flex items-center justify-between gap-4">
@@ -31,22 +31,29 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
-import axios from 'axios';
-import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+import { ref, computed, onMounted, watch } from "vue";
+import axios from "axios";
+import { backendUrl } from "@/js/index"; // Adjust the path if necessary
 
 export default {
   name: "OrderSynopsis",
-
+  props: {
+    deliveryOption: {
+      type: String,
+      default: "pickup", // Default value if no deliveryOption is provided
+    },
+  },
   setup(props, { emit }) {
-    const cartItems = ref([]); // Initialize cart items as a ref
+    const cartItems = ref([]);
 
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/api/cart-items`, { withCredentials: true });
+        const response = await axios.get(`${backendUrl}/api/cart-items`, {
+          withCredentials: true,
+        });
         cartItems.value = response.data.items;
       } catch (error) {
-        console.error('Failed to fetch cart items', error);
+        console.error("Failed to fetch cart items", error);
       }
     };
 
@@ -56,26 +63,22 @@ export default {
 
     // Calculate the original price of all items in the cart
     const originalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    return total + (item.price || 0) * (item.quantity || 0);
-  }, 0);
-});
+      return cartItems.value.reduce((total, item) => {
+        return total + (item.price || 0) * (item.quantity || 0);
+      }, 0);
+    });
 
-// Calculate the total savings based on the difference between the price and offer price
-const savings = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    // Only calculate savings if there is an offer price
-    const itemSavings = (item.price || 0) - (item.offer_price || item.price); // No savings if no offer price
-    return total + itemSavings * (item.quantity || 0); // Multiply by quantity
-  }, 0);
-});
+    // Calculate the total savings based on the difference between the price and offer price
+    const savings = computed(() => {
+      return cartItems.value.reduce((total, item) => {
+        const itemSavings = (item.price || 0) - (item.offer_price || item.price);
+        return total + itemSavings * (item.quantity || 0);
+      }, 0);
+    });
 
-
-
-    // Set delivery or pickup charges based on user selection (can be a prop)
-    const deliveryOption = 'pickup'; // Example: this could be dynamically set
+    // Calculate delivery cost based on the deliveryOption
     const deliveryPickup = computed(() => {
-      return deliveryOption === 'pickup' ? 0 : 99; // 99 for delivery, 0 for pickup
+      return props.deliveryOption === "pickup" ? 0 : 99;
     });
 
     // Calculate tax (assuming it's a percentage of the original price)
@@ -86,12 +89,12 @@ const savings = computed(() => {
 
     // Calculate the total price
     const totalPrice = computed(() => {
-      return originalPrice.value - savings.value + deliveryPickup.value + tax.value;
+      return originalPrice.value - savings.value + deliveryPickup.value;
     });
 
     // Emit the total price when it changes
     watch(totalPrice, (newTotalPrice) => {
-      emit('update:totalPrice', newTotalPrice);
+      emit("update:totalPrice", newTotalPrice);
     });
 
     return {
@@ -99,11 +102,12 @@ const savings = computed(() => {
       savings,
       deliveryPickup,
       tax,
-      totalPrice
+      totalPrice,
     };
-  }
+  },
 };
 </script>
+
 
 <style scoped>
 /* Add your styles here */

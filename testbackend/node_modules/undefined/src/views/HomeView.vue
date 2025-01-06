@@ -13,7 +13,7 @@
     Extracting classes using @apply
   </button> -->
   <div class="alert bg-gradient-to-r from-gray-900 to-gray-700 dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-700 text-white px-4 py-3 relative flex justify-between items-center" role="alert">
-    <span class="alert-text-left">Free delivery on all orders over $50!</span>
+    <span class="alert-text-left">Free delivery on all orders over $180!</span>
     <span class="alert-text-right">Phone Orders: 2221022990</span>
     <span class="alert-text-right">Up to 18 installments</span>
   </div>
@@ -30,7 +30,7 @@
     </p>
   </div>
   <div class="flex-shrink-0 w-full lg:w-1/2 h-64 lg:h-80 rounded-lg">
-    <img src="../images/jacketcat.png" alt="Jacket Cat Image" class="w-full h-full object-cover rounded-lg">
+    <img src="/public/store-inside-2.jpg" alt="Jacket Cat Image" class="w-full h-full object-cover rounded-lg">
   </div>
 </section>
 <SeenRecently/>

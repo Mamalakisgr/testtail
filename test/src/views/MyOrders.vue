@@ -102,6 +102,7 @@
         </div>
       </div>
     </div>
+    <Footer/>
   </template>
   
   <script setup>
@@ -109,6 +110,7 @@
   import axios from "axios";
   import AccountSideBar from "@/components/AccountSideBar.vue";
   import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+  import Footer from '../components/Footer.vue';
 
   const orders = ref([]);
   const loading = ref(true);

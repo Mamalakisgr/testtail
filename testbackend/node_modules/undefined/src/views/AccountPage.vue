@@ -1,10 +1,10 @@
 <template>
-<div class="flex min-h-screen bg-gray-100 dark:bg-gray-800">
+<div class="flex min-h-screen  bg-gray-100 dark:bg-gray-600">
     <!-- Include the AccountSidebar component -->
     <AccountSidebar />
 
     <!-- Main Content Area -->
-    <div class="flex-1 p-6  rounded-l shadow-lg  p-4  shadow-md hover:shadow-lg transition-shadow duration-300">
+    <div class="flex-1 p-6  rounded-l shadow-lg  rounded-lg p-4  shadow-md hover:shadow-lg transition-shadow duration-300">
       <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">My Account</h1>
       <!-- User Account Details -->
       <div class=" p-4 rounded-lg shadow-md dark:bg-gray-500">
@@ -65,15 +65,20 @@
       <button class="w-50 text-left py-2 px-4 mt-4 bg-blue-500 hover:bg-red-700 rounded">Update User Info</button>
     </div>
   </div>
+  <Footer />
+
 </template>
   <script>
   import axios from 'axios';
+  import Footer from '../components/Footer.vue';
   import AccountSidebar from '../components/AccountSideBar.vue';
   import { backendUrl } from '@/js/index'; // Adjust the path if necessary
+
 
   export default {
   components: {
     AccountSidebar,
+    Footer,
   },
   data() {
     return {
