@@ -21,7 +21,7 @@ const Grid = require('gridfs-stream');
 const { GridFSBucket } = require('mongodb');
 const { Readable } = require('stream');
 
-const allowedOrigins = ['http://localhost:5173','https://testtail-xs2f-ix17s612g-trelakias-projects.vercel.app/', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app', 'https://testtail-xs2f.vercel.app', 'http://localhost:3000'];
+const allowedOrigins = ['http://localhost:5173', 'https://main--dapper-beijinho-216f7a.netlify.app', 'https://testtail-iota.vercel.app', 'https://testtail-7xso.vercel.app', 'https://testtail-xs2f.vercel.app', 'http://localhost:3000'];
 
 app.use(cors({
   origin: function (origin, callback) {
