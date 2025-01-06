@@ -53,7 +53,7 @@ export const fetchWishlist = async () => {
   }
 };
 
-export const backendUrl = 'https://testtail-xs2f.vercel.app';
+export const backendUrl = 'https://testtail-xs2f-ix17s612g-trelakias-projects.vercel.app/';
 
 watch(() => (newVal) => {
   if (newVal) {
