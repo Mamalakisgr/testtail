@@ -1,0 +1,22 @@
+{
+  "builds": [
+    { "src": "testbackend/server.js", "use": "@vercel/node" },
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+  ],
+  "routes": [
+    { "src": "/api/products", "dest": "/testbackend/server.js" },
+    { "src": "/api/(.*)", "dest": "/testbackend/server.js" },
+    { 
+      "src": "/assets/(.*)\\.js",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/assets/$1.js"
+    },
+    { 
+      "src": "/assets/(.*)", 
+      "dest": "/assets/$1"
+    },
+    { "src": "/favicon.ico", "dest": "/favicon.ico" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
